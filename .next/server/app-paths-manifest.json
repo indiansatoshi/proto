@@ -1,10 +1,7 @@
 {
   "/api/files/route": "app/api/files/route.js",
-  "/api/models/route": "app/api/models/route.js",
-  "/api/datasets/route": "app/api/datasets/route.js",
-  "/api/knowledge-bases/route": "app/api/knowledge-bases/route.js",
-  "/models/page": "app/models/page.js",
-  "/datasets/page": "app/datasets/page.js",
   "/page": "app/page.js",
+  "/datasets/page": "app/datasets/page.js",
+  "/models/page": "app/models/page.js",
   "/ai-studio/page": "app/ai-studio/page.js"
 }

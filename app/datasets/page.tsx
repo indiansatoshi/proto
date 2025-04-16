@@ -1,8 +1,8 @@
 'use client'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { FilesTab } from '../../components/datasets/FilesTab'
-import { DatasetsTab } from '../../components/datasets/DatasetsTab'
-import { KnowledgeBaseTab } from '../../components/datasets/KnowledgeBaseTab'
+import { FilesTab } from '@/components/datasets/FilesTab'
+import { DatasetsTab } from '@/components/datasets/DatasetsTab'
+import { KnowledgeBaseTab } from '@/components/datasets/KnowledgeBaseTab'
 import { useState, useRef } from 'react'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { Search } from '@/components/ui/search'

@@ -1,8 +1,8 @@
 'use client'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
-import { LocalModelsTab } from '../../components/models/LocalModelsTab'
-import { ProviderModelsTab } from '../../components/models/ProviderModelsTab'
-import { CustomModelsTab } from '../../components/models/CustomModelsTab'
+import { LocalModelsTab } from '@/components/models/LocalModelsTab'
+import { ProviderModelsTab } from '@/components/models/ProviderModelsTab'
+import { CustomModelsTab } from '@/components/models/CustomModelsTab'
 import { useState, useRef } from 'react'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { Search } from '@/components/ui/search'
