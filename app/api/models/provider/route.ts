@@ -2,9 +2,24 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { PrismaClient } from '@prisma/client'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { z } from 'zod'
+import type { paths } from '@/types/openapi'
 
 // Create a new PrismaClient instance for this route
 const prisma = new PrismaClient()
+
+// OpenAPI types
+// POST (register provider model)
+type ProviderModelRegister = paths['/models/provider']['post']['requestBody']['content']['application/json']
+
+// Zod schema based on OpenAPI spec
+export const ProviderModelRegisterSchema = z.object({
+  name: z.string(),
+  type: z.enum(['embedding', 'llm']),
+  provider: z.enum(['openai', 'anthropic']),
+  source: z.string().optional(),
+  parameters: z.record(z.any()).optional()
+})
 
 export async function GET() {
   try {
@@ -24,18 +39,22 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json()
-    
+    const body = await request.json()
+    const parsed = ProviderModelRegisterSchema.safeParse(body)
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error }, { status: 400 })
+    }
+
     // Validate required fields
-    if (!data.name || !data.type || !data.provider || !data.modelId) {
+    if (!parsed.data.name || !parsed.data.type || !parsed.data.provider) {
       return NextResponse.json(
-        { error: 'Missing required fields: name, type, provider, and modelId are required' },
+        { error: 'Missing required fields: name, type, and provider are required' },
         { status: 400 }
       )
     }
 
     // Ensure this is not a local provider
-    if (data.provider === 'local') {
+    if (parsed.data.provider === 'local') {
       return NextResponse.json(
         { error: 'Use /api/models/local for local models' },
         { status: 400 }
@@ -43,7 +62,7 @@ export async function POST(request: NextRequest) {
     }
 
     const newModel = await prisma.model.create({
-      data
+      data: parsed.data
     })
     return NextResponse.json(newModel)
   } catch (error) {

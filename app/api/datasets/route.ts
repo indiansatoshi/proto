@@ -1,84 +1,68 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { z } from 'zod'
+import type { paths } from '@/types/openapi'
+
+// OpenAPI types
+// POST
+// Corrected: Remove '/api/' prefix for OpenAPI paths
+type DatasetCreate = paths['/datasets']['post']['requestBody']['content']['application/json']
+type DatasetResponse = paths['/datasets']['post']['responses']['201']['content']['application/json']
+
+// Zod schemas based on OpenAPI spec
+const DatasetCreateSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  fileIds: z.array(z.string())
+})
+
+const DatasetUpdateSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  fileIds: z.array(z.string()).optional()
+})
+
+const DatasetDeleteSchema = z.object({
+  id: z.string(),
+})
 
 export async function GET() {
-  try {
-    const datasets = await prisma.dataset.findMany({
-      orderBy: {
-        updatedAt: 'desc'
-      }
-    })
-    return NextResponse.json(datasets)
-  } catch (error) {
-    console.error('Error fetching datasets:', error)
-    return NextResponse.json({ error: 'Failed to fetch datasets' }, { status: 500 })
-  }
+  const datasets = await prisma.dataset.findMany({ orderBy: { updatedAt: 'desc' } })
+  return NextResponse.json(datasets)
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json()
-    const dataset = await prisma.dataset.create({
-      data: {
-        name: data.name,
-        description: data.description,
-        type: data.type,
-        format: data.format,
-        size: data.size,
-        path: data.path,
-        metadata: data.metadata || {}
-      }
-    })
-    return NextResponse.json({ data: dataset })
-  } catch (error) {
-    console.error('Error creating dataset:', error)
-    return NextResponse.json({ error: 'Failed to create dataset' }, { status: 500 })
+  const body = await request.json()
+  const parsed = DatasetCreateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
+  const dataset = await prisma.dataset.create({ data: parsed.data })
+  return NextResponse.json({ data: dataset })
 }
 
 export async function PUT(request: NextRequest) {
-  try {
-    const data = await request.json()
-    const { id, ...updateData } = data
-    
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-    }
-    
-    const dataset = await prisma.dataset.update({
-      where: { id },
-      data: updateData
-    })
-    return NextResponse.json(dataset)
-  } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Dataset not found' }, { status: 404 })
-    }
-    console.error('Error updating dataset:', error)
-    return NextResponse.json({ error: 'Failed to update dataset' }, { status: 500 })
+  const body = await request.json()
+  const parsed = DatasetUpdateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
+  const { id, ...updateData } = parsed.data
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
+  }
+  const dataset = await prisma.dataset.update({ where: { id }, data: updateData })
+  return NextResponse.json(dataset)
 }
 
 export async function DELETE(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
-    
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-    }
-    
-    await prisma.dataset.delete({
-      where: { id }
-    })
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Dataset not found' }, { status: 404 })
-    }
-    console.error('Error deleting dataset:', error)
-    return NextResponse.json({ error: 'Failed to delete dataset' }, { status: 500 })
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
+  const parsed = DatasetDeleteSchema.safeParse({ id })
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
-} 
+  await prisma.dataset.delete({ where: { id: parsed.data.id } })
+  return NextResponse.json({ success: true })
+}

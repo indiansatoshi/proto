@@ -1,76 +1,64 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { PrismaClient } from '@prisma/client'
+import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
+import type { paths } from '@/types/openapi'
 
-// Create a new PrismaClient instance for this route
-const prisma = new PrismaClient()
+// OpenAPI types
+// Corrected: Remove '/api/' prefix for OpenAPI paths
+type FileCreate = paths['/files']['post']['requestBody']['content']['application/json']
+type FileResponse = paths['/files']['post']['responses']['201']['content']['application/json']
+
+// POST (upload file)
+type FileUpload = paths['/files']['post']['requestBody']['content']['multipart/form-data'];
+
+// Zod schema based on OpenAPI spec
+const FileCreateSchema = z.object({
+  // Define fields as per your OpenAPI spec for file creation
+})
+
+const FileUpdateSchema = z.object({
+  id: z.string(),
+  // Add other fields as per OpenAPI spec
+})
+
+export const FileUploadSchema = z.object({
+  file: z.instanceof(Blob), // or z.any() if using FormData
+  metadata: z.record(z.any()).optional()
+})
 
 export async function GET() {
-  try {
-    const files = await prisma.file.findMany({
-      orderBy: {
-        updatedAt: 'desc'
-      }
-    })
-    return NextResponse.json(files)
-  } catch (error) {
-    console.error('Error fetching files:', error)
-    return NextResponse.json({ error: 'Failed to fetch files' }, { status: 500 })
-  }
+  const files = await prisma.file.findMany({ orderBy: { updatedAt: 'desc' } })
+  return NextResponse.json(files)
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json()
-    const file = await prisma.file.create({
-      data
-    })
-    return NextResponse.json(file)
-  } catch (error) {
-    console.error('Error creating file:', error)
-    return NextResponse.json({ error: 'Failed to create file' }, { status: 500 })
+  const body = await request.json()
+  const parsed = FileCreateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
+  const file = await prisma.file.create({ data: parsed.data })
+  return NextResponse.json(file)
 }
 
 export async function PUT(request: NextRequest) {
-  try {
-    const data = await request.json()
-    const { id, ...updateData } = data
-    
-    const file = await prisma.file.update({
-      where: { id },
-      data: updateData
-    })
-    
-    return NextResponse.json(file)
-  } catch (error) {
-    console.error('Error updating file:', error)
-    if (error instanceof Error && 'code' in error && error.code === 'P2025') {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 })
-    }
-    return NextResponse.json({ error: 'Failed to update file' }, { status: 500 })
+  const body = await request.json()
+  const parsed = FileUpdateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
+  const { id, ...updateData } = parsed.data
+  const file = await prisma.file.update({ where: { id }, data: updateData })
+  return NextResponse.json(file)
 }
 
 export async function DELETE(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
-    
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-    }
-
-    await prisma.file.delete({
-      where: { id }
-    })
-    
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting file:', error)
-    if (error instanceof Error && 'code' in error && error.code === 'P2025') {
-      return NextResponse.json({ error: 'File not found' }, { status: 404 })
-    }
-    return NextResponse.json({ error: 'Failed to delete file' }, { status: 500 })
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
   }
-} 
+  await prisma.file.delete({ where: { id } })
+  return NextResponse.json({ success: true })
+}

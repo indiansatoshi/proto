@@ -1,76 +1,58 @@
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
-import { PrismaClient } from '@prisma/client'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { prisma } from '@/lib/prisma'
+import { z } from 'zod'
+import type { paths } from '@/types/openapi'
 
-// Create a new PrismaClient instance for this route
-const prisma = new PrismaClient()
+// OpenAPI types
+// Corrected: Remove '/api/' prefix for OpenAPI paths
+type KnowledgeBaseCreate = paths['/knowledge-bases']['post']['requestBody']['content']['application/json']
+type KnowledgeBaseResponse = paths['/knowledge-bases']['post']['responses']['201']['content']['application/json']
+
+// Zod schema based on OpenAPI spec
+const KnowledgeBaseCreateSchema = z.object({
+  name: z.string(),
+  description: z.string().optional(),
+  datasetIds: z.array(z.string())
+})
+
+const KnowledgeBaseUpdateSchema = z.object({
+  id: z.string(),
+  // Add other fields as per OpenAPI spec
+})
 
 export async function GET() {
-  try {
-    const knowledgeBases = await prisma.knowledgeBase.findMany({
-      orderBy: {
-        updatedAt: 'desc'
-      }
-    })
-    return NextResponse.json(knowledgeBases)
-  } catch (error) {
-    console.error('Error fetching knowledge bases:', error)
-    return NextResponse.json({ error: 'Failed to fetch knowledge bases' }, { status: 500 })
-  }
+  const knowledgeBases = await prisma.knowledgeBase.findMany({ orderBy: { updatedAt: 'desc' } })
+  return NextResponse.json(knowledgeBases)
 }
 
 export async function POST(request: NextRequest) {
-  try {
-    const data = await request.json()
-    
-    // For now, just return the data since we don't have a KnowledgeBase model yet
-    return NextResponse.json({
-      id: 'temp-' + Date.now(),
-      ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    })
-  } catch (error) {
-    console.error('Error creating knowledge base:', error)
-    return NextResponse.json({ error: 'Failed to create knowledge base' }, { status: 500 })
+  const body = await request.json()
+  const parsed = KnowledgeBaseCreateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
+  const knowledgeBase = await prisma.knowledgeBase.create({ data: parsed.data })
+  return NextResponse.json({ data: knowledgeBase })
 }
 
 export async function PUT(request: NextRequest) {
-  try {
-    const data = await request.json()
-    const { id, ...updateData } = data
-    
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-    }
-    
-    // For now, just return the data since we don't have a KnowledgeBase model yet
-    return NextResponse.json({
-      id,
-      ...updateData,
-      updatedAt: new Date().toISOString()
-    })
-  } catch (error) {
-    console.error('Error updating knowledge base:', error)
-    return NextResponse.json({ error: 'Failed to update knowledge base' }, { status: 500 })
+  const body = await request.json()
+  const parsed = KnowledgeBaseUpdateSchema.safeParse(body)
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 })
   }
+  const { id, ...updateData } = parsed.data
+  const knowledgeBase = await prisma.knowledgeBase.update({ where: { id }, data: updateData })
+  return NextResponse.json(knowledgeBase)
 }
 
 export async function DELETE(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url)
-    const id = searchParams.get('id')
-    
-    if (!id) {
-      return NextResponse.json({ error: 'ID is required' }, { status: 400 })
-    }
-    
-    // For now, just return success since we don't have a KnowledgeBase model yet
-    return NextResponse.json({ success: true })
-  } catch (error) {
-    console.error('Error deleting knowledge base:', error)
-    return NextResponse.json({ error: 'Failed to delete knowledge base' }, { status: 500 })
+  const { searchParams } = new URL(request.url)
+  const id = searchParams.get('id')
+  if (!id) {
+    return NextResponse.json({ error: 'ID is required' }, { status: 400 })
   }
-} 
+  await prisma.knowledgeBase.delete({ where: { id } })
+  return NextResponse.json({ success: true })
+}

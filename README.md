@@ -68,7 +68,7 @@ yarn typegen
 - React (latest)
 - TypeScript
 - Shadcn UI
-- Axios
+- [x] Axios (removed)
 - OpenAPI types
 
 ---

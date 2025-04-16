@@ -1,29 +1,45 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import { prisma } from '@/lib/prisma'
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { prisma } from '@/lib/prisma';
+import { z } from 'zod';
+
+// OpenAPI types
+// Corrected: Use '/models/custom' POST for create, but for update, this is not in OpenAPI
+type CustomModelUpdate = {
+  name?: string;
+  type?: 'embedding' | 'llm';
+  architecture?: string;
+  parameters?: Record<string, any>;
+  initial_weights?: string;
+};
+
+// Zod schema based on OpenAPI spec
+export const CustomModelUpdateSchema = z.object({
+  name: z.string().optional(),
+  type: z.enum(['embedding', 'llm']).optional(),
+  architecture: z.string().optional(),
+  parameters: z.record(z.any()).optional(),
+  initial_weights: z.string().optional()
+});
 
 export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
-  try {
-    const data = await request.json()
-    const model = await prisma.model.update({
-      where: { 
-        id: params.id,
-        provider: 'custom'
-      },
-      data
-    })
-    return NextResponse.json({ data: model })
-  } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Custom model not found' }, { status: 404 })
-    }
-    console.error('Error updating custom model:', error)
-    return NextResponse.json({ error: 'Failed to update custom model' }, { status: 500 })
+  const body = await request.json();
+  const parsed = CustomModelUpdateSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: parsed.error }, { status: 400 });
   }
+  const data = parsed.data;
+  const model = await prisma.model.update({
+    where: { 
+      id: params.id,
+      provider: 'custom'
+    },
+    data
+  });
+  return NextResponse.json({ data: model });
 }
 
 export async function DELETE(
@@ -36,13 +52,10 @@ export async function DELETE(
         id: params.id,
         provider: 'custom'
       }
-    })
-    return NextResponse.json({ success: true })
+    });
+    return NextResponse.json({ success: true });
   } catch (error) {
-    if (error instanceof PrismaClientKnownRequestError && error.code === 'P2025') {
-      return NextResponse.json({ error: 'Custom model not found' }, { status: 404 })
-    }
-    console.error('Error deleting custom model:', error)
-    return NextResponse.json({ error: 'Failed to delete custom model' }, { status: 500 })
+    console.error('Error deleting custom model:', error);
+    return NextResponse.json({ error: 'Failed to delete custom model' }, { status: 500 });
   }
-} 
+}

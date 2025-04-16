@@ -336,7 +336,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   useCrud: () => (/* binding */ useCrud)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"(ssr)/./node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! axios */ \"(ssr)/./node_modules/axios/lib/axios.js\");\n\n\nfunction useCrud({ baseUrl, onSuccess, onError }) {\n    const [items, setItems] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);\n    const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);\n    const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);\n    // Use refs to store callbacks to prevent dependency changes\n    const onSuccessRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onSuccess);\n    const onErrorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onError);\n    // Update refs when callbacks change\n    onSuccessRef.current = onSuccess;\n    onErrorRef.current = onError;\n    const fetchItems = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[fetchItems]\": async ()=>{\n            try {\n                setLoading(true);\n                const response = await axios__WEBPACK_IMPORTED_MODULE_1__[\"default\"].get(baseUrl);\n                setItems(response.data.data || response.data);\n                onSuccessRef.current?.();\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[fetchItems]\"], [\n        baseUrl\n    ]);\n    const createItem = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[createItem]\": async (data)=>{\n            try {\n                setLoading(true);\n                const response = await axios__WEBPACK_IMPORTED_MODULE_1__[\"default\"].post(baseUrl, data);\n                setItems({\n                    \"useCrud.useCallback[createItem]\": (prev)=>[\n                            ...prev,\n                            response.data.data || response.data\n                        ]\n                }[\"useCrud.useCallback[createItem]\"]);\n                onSuccessRef.current?.();\n                return response.data.data || response.data;\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n                throw err;\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[createItem]\"], [\n        baseUrl\n    ]);\n    const updateItem = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[updateItem]\": async (id, data)=>{\n            try {\n                setLoading(true);\n                const response = await axios__WEBPACK_IMPORTED_MODULE_1__[\"default\"].put(`${baseUrl}/${id}`, data);\n                setItems({\n                    \"useCrud.useCallback[updateItem]\": (prev)=>prev.map({\n                            \"useCrud.useCallback[updateItem]\": (item)=>item.id === id ? response.data.data || response.data : item\n                        }[\"useCrud.useCallback[updateItem]\"])\n                }[\"useCrud.useCallback[updateItem]\"]);\n                onSuccessRef.current?.();\n                return response.data.data || response.data;\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n                throw err;\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[updateItem]\"], [\n        baseUrl\n    ]);\n    const deleteItem = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[deleteItem]\": async (id)=>{\n            try {\n                setLoading(true);\n                await axios__WEBPACK_IMPORTED_MODULE_1__[\"default\"].delete(`${baseUrl}/${id}`);\n                setItems({\n                    \"useCrud.useCallback[deleteItem]\": (prev)=>prev.filter({\n                            \"useCrud.useCallback[deleteItem]\": (item)=>item.id !== id\n                        }[\"useCrud.useCallback[deleteItem]\"])\n                }[\"useCrud.useCallback[deleteItem]\"]);\n                onSuccessRef.current?.();\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n                throw err;\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[deleteItem]\"], [\n        baseUrl\n    ]);\n    return {\n        items,\n        loading,\n        error,\n        fetchItems,\n        createItem,\n        updateItem,\n        deleteItem\n    };\n}\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiKHNzcikvLi9saWIvaG9va3MvdXNlLWNydWQudHMiLCJtYXBwaW5ncyI6Ijs7Ozs7OztBQUFxRDtBQUM1QjtBQVFsQixTQUFTSSxRQUFXLEVBQUVDLE9BQU8sRUFBRUMsU0FBUyxFQUFFQyxPQUFPLEVBQXFCO0lBQzNFLE1BQU0sQ0FBQ0MsT0FBT0MsU0FBUyxHQUFHVCwrQ0FBUUEsQ0FBTSxFQUFFO0lBQzFDLE1BQU0sQ0FBQ1UsU0FBU0MsV0FBVyxHQUFHWCwrQ0FBUUEsQ0FBQztJQUN2QyxNQUFNLENBQUNZLE9BQU9DLFNBQVMsR0FBR2IsK0NBQVFBLENBQU07SUFFeEMsNERBQTREO0lBQzVELE1BQU1jLGVBQWVaLDZDQUFNQSxDQUFDSTtJQUM1QixNQUFNUyxhQUFhYiw2Q0FBTUEsQ0FBQ0s7SUFFMUIsb0NBQW9DO0lBQ3BDTyxhQUFhRSxPQUFPLEdBQUdWO0lBQ3ZCUyxXQUFXQyxPQUFPLEdBQUdUO0lBRXJCLE1BQU1VLGFBQWFoQixrREFBV0E7MkNBQUM7WUFDN0IsSUFBSTtnQkFDRlUsV0FBVztnQkFDWCxNQUFNTyxXQUFXLE1BQU1mLDZDQUFLQSxDQUFDZ0IsR0FBRyxDQUFDZDtnQkFDakNJLFNBQVNTLFNBQVNFLElBQUksQ0FBQ0EsSUFBSSxJQUFJRixTQUFTRSxJQUFJO2dCQUM1Q04sYUFBYUUsT0FBTztZQUN0QixFQUFFLE9BQU9LLEtBQUs7Z0JBQ1pSLFNBQVNRO2dCQUNUTixXQUFXQyxPQUFPLEdBQUdLO1lBQ3ZCLFNBQVU7Z0JBQ1JWLFdBQVc7WUFDYjtRQUNGOzBDQUFHO1FBQUNOO0tBQVE7SUFFWixNQUFNaUIsYUFBYXJCLGtEQUFXQTsyQ0FBQyxPQUFPbUI7WUFDcEMsSUFBSTtnQkFDRlQsV0FBVztnQkFDWCxNQUFNTyxXQUFXLE1BQU1mLDZDQUFLQSxDQUFDb0IsSUFBSSxDQUFDbEIsU0FBU2U7Z0JBQzNDWDt1REFBU2UsQ0FBQUEsT0FBUTsrQkFBSUE7NEJBQU1OLFNBQVNFLElBQUksQ0FBQ0EsSUFBSSxJQUFJRixTQUFTRSxJQUFJO3lCQUFDOztnQkFDL0ROLGFBQWFFLE9BQU87Z0JBQ3BCLE9BQU9FLFNBQVNFLElBQUksQ0FBQ0EsSUFBSSxJQUFJRixTQUFTRSxJQUFJO1lBQzVDLEVBQUUsT0FBT0MsS0FBSztnQkFDWlIsU0FBU1E7Z0JBQ1ROLFdBQVdDLE9BQU8sR0FBR0s7Z0JBQ3JCLE1BQU1BO1lBQ1IsU0FBVTtnQkFDUlYsV0FBVztZQUNiO1FBQ0Y7MENBQUc7UUFBQ047S0FBUTtJQUVaLE1BQU1vQixhQUFheEIsa0RBQVdBOzJDQUFDLE9BQU95QixJQUFZTjtZQUNoRCxJQUFJO2dCQUNGVCxXQUFXO2dCQUNYLE1BQU1PLFdBQVcsTUFBTWYsNkNBQUtBLENBQUN3QixHQUFHLENBQUMsR0FBR3RCLFFBQVEsQ0FBQyxFQUFFcUIsSUFBSSxFQUFFTjtnQkFDckRYO3VEQUFTZSxDQUFBQSxPQUFRQSxLQUFLSSxHQUFHOytEQUFDQyxDQUFBQSxPQUN4QixLQUFjSCxFQUFFLEtBQUtBLEtBQU1SLFNBQVNFLElBQUksQ0FBQ0EsSUFBSSxJQUFJRixTQUFTRSxJQUFJLEdBQUlTOzs7Z0JBRXBFZixhQUFhRSxPQUFPO2dCQUNwQixPQUFPRSxTQUFTRSxJQUFJLENBQUNBLElBQUksSUFBSUYsU0FBU0UsSUFBSTtZQUM1QyxFQUFFLE9BQU9DLEtBQUs7Z0JBQ1pSLFNBQVNRO2dCQUNUTixXQUFXQyxPQUFPLEdBQUdLO2dCQUNyQixNQUFNQTtZQUNSLFNBQVU7Z0JBQ1JWLFdBQVc7WUFDYjtRQUNGOzBDQUFHO1FBQUNOO0tBQVE7SUFFWixNQUFNeUIsYUFBYTdCLGtEQUFXQTsyQ0FBQyxPQUFPeUI7WUFDcEMsSUFBSTtnQkFDRmYsV0FBVztnQkFDWCxNQUFNUiw2Q0FBS0EsQ0FBQzRCLE1BQU0sQ0FBQyxHQUFHMUIsUUFBUSxDQUFDLEVBQUVxQixJQUFJO2dCQUNyQ2pCO3VEQUFTZSxDQUFBQSxPQUFRQSxLQUFLUSxNQUFNOytEQUFDSCxDQUFBQSxPQUFRLEtBQWNILEVBQUUsS0FBS0E7OztnQkFDMURaLGFBQWFFLE9BQU87WUFDdEIsRUFBRSxPQUFPSyxLQUFLO2dCQUNaUixTQUFTUTtnQkFDVE4sV0FBV0MsT0FBTyxHQUFHSztnQkFDckIsTUFBTUE7WUFDUixTQUFVO2dCQUNSVixXQUFXO1lBQ2I7UUFDRjswQ0FBRztRQUFDTjtLQUFRO0lBRVosT0FBTztRQUNMRztRQUNBRTtRQUNBRTtRQUNBSztRQUNBSztRQUNBRztRQUNBSztJQUNGO0FBQ0YiLCJzb3VyY2VzIjpbIi9Vc2Vycy9yZWdhbi1tYWMvRG93bmxvYWRzL01VRC9wcm90by1mZS9saWIvaG9va3MvdXNlLWNydWQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgdXNlU3RhdGUsIHVzZUNhbGxiYWNrLCB1c2VSZWYgfSBmcm9tICdyZWFjdCdcbmltcG9ydCBheGlvcyBmcm9tICdheGlvcydcblxuaW50ZXJmYWNlIFVzZUNydWRPcHRpb25zPFQ+IHtcbiAgYmFzZVVybDogc3RyaW5nXG4gIG9uU3VjY2Vzcz86ICgpID0+IHZvaWRcbiAgb25FcnJvcj86IChlcnJvcjogYW55KSA9PiB2b2lkXG59XG5cbmV4cG9ydCBmdW5jdGlvbiB1c2VDcnVkPFQ+KHsgYmFzZVVybCwgb25TdWNjZXNzLCBvbkVycm9yIH06IFVzZUNydWRPcHRpb25zPFQ+KSB7XG4gIGNvbnN0IFtpdGVtcywgc2V0SXRlbXNdID0gdXNlU3RhdGU8VFtdPihbXSlcbiAgY29uc3QgW2xvYWRpbmcsIHNldExvYWRpbmddID0gdXNlU3RhdGUoZmFsc2UpXG4gIGNvbnN0IFtlcnJvciwgc2V0RXJyb3JdID0gdXNlU3RhdGU8YW55PihudWxsKVxuICBcbiAgLy8gVXNlIHJlZnMgdG8gc3RvcmUgY2FsbGJhY2tzIHRvIHByZXZlbnQgZGVwZW5kZW5jeSBjaGFuZ2VzXG4gIGNvbnN0IG9uU3VjY2Vzc1JlZiA9IHVzZVJlZihvblN1Y2Nlc3MpXG4gIGNvbnN0IG9uRXJyb3JSZWYgPSB1c2VSZWYob25FcnJvcilcbiAgXG4gIC8vIFVwZGF0ZSByZWZzIHdoZW4gY2FsbGJhY2tzIGNoYW5nZVxuICBvblN1Y2Nlc3NSZWYuY3VycmVudCA9IG9uU3VjY2Vzc1xuICBvbkVycm9yUmVmLmN1cnJlbnQgPSBvbkVycm9yXG5cbiAgY29uc3QgZmV0Y2hJdGVtcyA9IHVzZUNhbGxiYWNrKGFzeW5jICgpID0+IHtcbiAgICB0cnkge1xuICAgICAgc2V0TG9hZGluZyh0cnVlKVxuICAgICAgY29uc3QgcmVzcG9uc2UgPSBhd2FpdCBheGlvcy5nZXQoYmFzZVVybClcbiAgICAgIHNldEl0ZW1zKHJlc3BvbnNlLmRhdGEuZGF0YSB8fCByZXNwb25zZS5kYXRhKVxuICAgICAgb25TdWNjZXNzUmVmLmN1cnJlbnQ/LigpXG4gICAgfSBjYXRjaCAoZXJyKSB7XG4gICAgICBzZXRFcnJvcihlcnIpXG4gICAgICBvbkVycm9yUmVmLmN1cnJlbnQ/LihlcnIpXG4gICAgfSBmaW5hbGx5IHtcbiAgICAgIHNldExvYWRpbmcoZmFsc2UpXG4gICAgfVxuICB9LCBbYmFzZVVybF0pXG5cbiAgY29uc3QgY3JlYXRlSXRlbSA9IHVzZUNhbGxiYWNrKGFzeW5jIChkYXRhOiBQYXJ0aWFsPFQ+KSA9PiB7XG4gICAgdHJ5IHtcbiAgICAgIHNldExvYWRpbmcodHJ1ZSlcbiAgICAgIGNvbnN0IHJlc3BvbnNlID0gYXdhaXQgYXhpb3MucG9zdChiYXNlVXJsLCBkYXRhKVxuICAgICAgc2V0SXRlbXMocHJldiA9PiBbLi4ucHJldiwgcmVzcG9uc2UuZGF0YS5kYXRhIHx8IHJlc3BvbnNlLmRhdGFdKVxuICAgICAgb25TdWNjZXNzUmVmLmN1cnJlbnQ/LigpXG4gICAgICByZXR1cm4gcmVzcG9uc2UuZGF0YS5kYXRhIHx8IHJlc3BvbnNlLmRhdGFcbiAgICB9IGNhdGNoIChlcnIpIHtcbiAgICAgIHNldEVycm9yKGVycilcbiAgICAgIG9uRXJyb3JSZWYuY3VycmVudD8uKGVycilcbiAgICAgIHRocm93IGVyclxuICAgIH0gZmluYWxseSB7XG4gICAgICBzZXRMb2FkaW5nKGZhbHNlKVxuICAgIH1cbiAgfSwgW2Jhc2VVcmxdKVxuXG4gIGNvbnN0IHVwZGF0ZUl0ZW0gPSB1c2VDYWxsYmFjayhhc3luYyAoaWQ6IHN0cmluZywgZGF0YTogUGFydGlhbDxUPikgPT4ge1xuICAgIHRyeSB7XG4gICAgICBzZXRMb2FkaW5nKHRydWUpXG4gICAgICBjb25zdCByZXNwb25zZSA9IGF3YWl0IGF4aW9zLnB1dChgJHtiYXNlVXJsfS8ke2lkfWAsIGRhdGEpXG4gICAgICBzZXRJdGVtcyhwcmV2ID0+IHByZXYubWFwKGl0ZW0gPT4gXG4gICAgICAgIChpdGVtIGFzIGFueSkuaWQgPT09IGlkID8gKHJlc3BvbnNlLmRhdGEuZGF0YSB8fCByZXNwb25zZS5kYXRhKSA6IGl0ZW1cbiAgICAgICkpXG4gICAgICBvblN1Y2Nlc3NSZWYuY3VycmVudD8uKClcbiAgICAgIHJldHVybiByZXNwb25zZS5kYXRhLmRhdGEgfHwgcmVzcG9uc2UuZGF0YVxuICAgIH0gY2F0Y2ggKGVycikge1xuICAgICAgc2V0RXJyb3IoZXJyKVxuICAgICAgb25FcnJvclJlZi5jdXJyZW50Py4oZXJyKVxuICAgICAgdGhyb3cgZXJyXG4gICAgfSBmaW5hbGx5IHtcbiAgICAgIHNldExvYWRpbmcoZmFsc2UpXG4gICAgfVxuICB9LCBbYmFzZVVybF0pXG5cbiAgY29uc3QgZGVsZXRlSXRlbSA9IHVzZUNhbGxiYWNrKGFzeW5jIChpZDogc3RyaW5nKSA9PiB7XG4gICAgdHJ5IHtcbiAgICAgIHNldExvYWRpbmcodHJ1ZSlcbiAgICAgIGF3YWl0IGF4aW9zLmRlbGV0ZShgJHtiYXNlVXJsfS8ke2lkfWApXG4gICAgICBzZXRJdGVtcyhwcmV2ID0+IHByZXYuZmlsdGVyKGl0ZW0gPT4gKGl0ZW0gYXMgYW55KS5pZCAhPT0gaWQpKVxuICAgICAgb25TdWNjZXNzUmVmLmN1cnJlbnQ/LigpXG4gICAgfSBjYXRjaCAoZXJyKSB7XG4gICAgICBzZXRFcnJvcihlcnIpXG4gICAgICBvbkVycm9yUmVmLmN1cnJlbnQ/LihlcnIpXG4gICAgICB0aHJvdyBlcnJcbiAgICB9IGZpbmFsbHkge1xuICAgICAgc2V0TG9hZGluZyhmYWxzZSlcbiAgICB9XG4gIH0sIFtiYXNlVXJsXSlcblxuICByZXR1cm4ge1xuICAgIGl0ZW1zLFxuICAgIGxvYWRpbmcsXG4gICAgZXJyb3IsXG4gICAgZmV0Y2hJdGVtcyxcbiAgICBjcmVhdGVJdGVtLFxuICAgIHVwZGF0ZUl0ZW0sXG4gICAgZGVsZXRlSXRlbVxuICB9XG59ICJdLCJuYW1lcyI6WyJ1c2VTdGF0ZSIsInVzZUNhbGxiYWNrIiwidXNlUmVmIiwiYXhpb3MiLCJ1c2VDcnVkIiwiYmFzZVVybCIsIm9uU3VjY2VzcyIsIm9uRXJyb3IiLCJpdGVtcyIsInNldEl0ZW1zIiwibG9hZGluZyIsInNldExvYWRpbmciLCJlcnJvciIsInNldEVycm9yIiwib25TdWNjZXNzUmVmIiwib25FcnJvclJlZiIsImN1cnJlbnQiLCJmZXRjaEl0ZW1zIiwicmVzcG9uc2UiLCJnZXQiLCJkYXRhIiwiZXJyIiwiY3JlYXRlSXRlbSIsInBvc3QiLCJwcmV2IiwidXBkYXRlSXRlbSIsImlkIiwicHV0IiwibWFwIiwiaXRlbSIsImRlbGV0ZUl0ZW0iLCJkZWxldGUiLCJmaWx0ZXIiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///(ssr)/./lib/hooks/use-crud.ts\n");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   useCrud: () => (/* binding */ useCrud)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"(ssr)/./node_modules/next/dist/server/route-modules/app-page/vendored/ssr/react.js\");\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);\n\nfunction useCrud({ baseUrl, onSuccess, onError }) {\n    const [items, setItems] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)([]);\n    const [loading, setLoading] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(false);\n    const [error, setError] = (0,react__WEBPACK_IMPORTED_MODULE_0__.useState)(null);\n    const onSuccessRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onSuccess);\n    const onErrorRef = (0,react__WEBPACK_IMPORTED_MODULE_0__.useRef)(onError);\n    onSuccessRef.current = onSuccess;\n    onErrorRef.current = onError;\n    const fetchJson = async (url, options)=>{\n        const res = await fetch(url, options);\n        if (!res.ok) {\n            const err = await res.json().catch(()=>({}));\n            throw err.error || err || res.statusText;\n        }\n        return res.json();\n    };\n    const fetchItems = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[fetchItems]\": async ()=>{\n            try {\n                setLoading(true);\n                const data = await fetchJson(baseUrl);\n                setItems(data.data || data);\n                onSuccessRef.current?.();\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[fetchItems]\"], [\n        baseUrl\n    ]);\n    const createItem = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[createItem]\": async (data)=>{\n            try {\n                setLoading(true);\n                const res = await fetchJson(baseUrl, {\n                    method: 'POST',\n                    headers: {\n                        'Content-Type': 'application/json'\n                    },\n                    body: JSON.stringify(data)\n                });\n                setItems({\n                    \"useCrud.useCallback[createItem]\": (prev)=>[\n                            ...prev,\n                            res.data || res\n                        ]\n                }[\"useCrud.useCallback[createItem]\"]);\n                onSuccessRef.current?.();\n                return res.data || res;\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[createItem]\"], [\n        baseUrl\n    ]);\n    const updateItem = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[updateItem]\": async (id, data)=>{\n            try {\n                setLoading(true);\n                const res = await fetchJson(`${baseUrl}/${id}`, {\n                    method: 'PUT',\n                    headers: {\n                        'Content-Type': 'application/json'\n                    },\n                    body: JSON.stringify(data)\n                });\n                setItems({\n                    \"useCrud.useCallback[updateItem]\": (prev)=>prev.map({\n                            \"useCrud.useCallback[updateItem]\": (item)=>item.id === id ? res.data || res : item\n                        }[\"useCrud.useCallback[updateItem]\"])\n                }[\"useCrud.useCallback[updateItem]\"]);\n                onSuccessRef.current?.();\n                return res.data || res;\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[updateItem]\"], [\n        baseUrl\n    ]);\n    const deleteItem = (0,react__WEBPACK_IMPORTED_MODULE_0__.useCallback)({\n        \"useCrud.useCallback[deleteItem]\": async (id)=>{\n            try {\n                setLoading(true);\n                await fetchJson(`${baseUrl}/${id}`, {\n                    method: 'DELETE'\n                });\n                setItems({\n                    \"useCrud.useCallback[deleteItem]\": (prev)=>prev.filter({\n                            \"useCrud.useCallback[deleteItem]\": (item)=>item.id !== id\n                        }[\"useCrud.useCallback[deleteItem]\"])\n                }[\"useCrud.useCallback[deleteItem]\"]);\n                onSuccessRef.current?.();\n            } catch (err) {\n                setError(err);\n                onErrorRef.current?.(err);\n            } finally{\n                setLoading(false);\n            }\n        }\n    }[\"useCrud.useCallback[deleteItem]\"], [\n        baseUrl\n    ]);\n    return {\n        items,\n        loading,\n        error,\n        fetchItems,\n        createItem,\n        updateItem,\n        deleteItem\n    };\n}\n//# sourceURL=[module]\n//# sourceMappingURL=data:application/json;charset=utf-8;base64,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QUNGMUIsV0FBVztnQkFDWCxNQUFNTSxVQUFVLEdBQUdaLFFBQVEsQ0FBQyxFQUFFZ0MsSUFBSSxFQUFFO29CQUFFUCxRQUFRO2dCQUFTO2dCQUN2RHJCO3VEQUFTMEIsQ0FBQUEsT0FBUUEsS0FBS00sTUFBTTsrREFBQ0YsQ0FBQUEsT0FBUSxLQUFjRixFQUFFLEtBQUtBOzs7Z0JBQzFEdkIsYUFBYUUsT0FBTztZQUN0QixFQUFFLE9BQU9PLEtBQUs7Z0JBQ1pWLFNBQVNVO2dCQUNUUixXQUFXQyxPQUFPLEdBQUdPO1lBQ3ZCLFNBQVU7Z0JBQ1JaLFdBQVc7WUFDYjtRQUNGOzBDQUFHO1FBQUNOO0tBQVE7SUFFWixPQUFPO1FBQ0xHO1FBQU9FO1FBQVNFO1FBQU9lO1FBQVlFO1FBQVlPO1FBQVlJO0lBQzdEO0FBQ0YiLCJzb3VyY2VzIjpbIi9Vc2Vycy9yZWdhbi1tYWMvRG93bmxvYWRzL01VRC9wcm90by1mZS9saWIvaG9va3MvdXNlLWNydWQudHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHsgdXNlU3RhdGUsIHVzZUNhbGxiYWNrLCB1c2VSZWYgfSBmcm9tICdyZWFjdCdcblxuaW50ZXJmYWNlIFVzZUNydWRPcHRpb25zPFQ+IHtcbiAgYmFzZVVybDogc3RyaW5nXG4gIG9uU3VjY2Vzcz86ICgpID0+IHZvaWRcbiAgb25FcnJvcj86IChlcnJvcjogYW55KSA9PiB2b2lkXG59XG5cbmV4cG9ydCBmdW5jdGlvbiB1c2VDcnVkPFQ+KHsgYmFzZVVybCwgb25TdWNjZXNzLCBvbkVycm9yIH06IFVzZUNydWRPcHRpb25zPFQ+KSB7XG4gIGNvbnN0IFtpdGVtcywgc2V0SXRlbXNdID0gdXNlU3RhdGU8VFtdPihbXSlcbiAgY29uc3QgW2xvYWRpbmcsIHNldExvYWRpbmddID0gdXNlU3RhdGUoZmFsc2UpXG4gIGNvbnN0IFtlcnJvciwgc2V0RXJyb3JdID0gdXNlU3RhdGU8YW55PihudWxsKVxuXG4gIGNvbnN0IG9uU3VjY2Vzc1JlZiA9IHVzZVJlZihvblN1Y2Nlc3MpXG4gIGNvbnN0IG9uRXJyb3JSZWYgPSB1c2VSZWYob25FcnJvcilcblxuICBvblN1Y2Nlc3NSZWYuY3VycmVudCA9IG9uU3VjY2Vzc1xuICBvbkVycm9yUmVmLmN1cnJlbnQgPSBvbkVycm9yXG5cbiAgY29uc3QgZmV0Y2hKc29uID0gYXN5bmMgKHVybDogc3RyaW5nLCBvcHRpb25zPzogUmVxdWVzdEluaXQpID0+IHtcbiAgICBjb25zdCByZXMgPSBhd2FpdCBmZXRjaCh1cmwsIG9wdGlvbnMpXG4gICAgaWYgKCFyZXMub2spIHtcbiAgICAgIGNvbnN0IGVyciA9IGF3YWl0IHJlcy5qc29uKCkuY2F0Y2goKCkgPT4gKHt9KSlcbiAgICAgIHRocm93IGVyci5lcnJvciB8fCBlcnIgfHwgcmVzLnN0YXR1c1RleHRcbiAgICB9XG4gICAgcmV0dXJuIHJlcy5qc29uKClcbiAgfVxuXG4gIGNvbnN0IGZldGNoSXRlbXMgPSB1c2VDYWxsYmFjayhhc3luYyAoKSA9PiB7XG4gICAgdHJ5IHtcbiAgICAgIHNldExvYWRpbmcodHJ1ZSlcbiAgICAgIGNvbnN0IGRhdGEgPSBhd2FpdCBmZXRjaEpzb24oYmFzZVVybClcbiAgICAgIHNldEl0ZW1zKGRhdGEuZGF0YSB8fCBkYXRhKVxuICAgICAgb25TdWNjZXNzUmVmLmN1cnJlbnQ/LigpXG4gICAgfSBjYXRjaCAoZXJyKSB7XG4gICAgICBzZXRFcnJvcihlcnIpXG4gICAgICBvbkVycm9yUmVmLmN1cnJlbnQ/LihlcnIpXG4gICAgfSBmaW5hbGx5IHtcbiAgICAgIHNldExvYWRpbmcoZmFsc2UpXG4gICAgfVxuICB9LCBbYmFzZVVybF0pXG5cbiAgY29uc3QgY3JlYXRlSXRlbSA9IHVzZUNhbGxiYWNrKGFzeW5jIChkYXRhOiBQYXJ0aWFsPFQ+KSA9PiB7XG4gICAgdHJ5IHtcbiAgICAgIHNldExvYWRpbmcodHJ1ZSlcbiAgICAgIGNvbnN0IHJlcyA9IGF3YWl0IGZldGNoSnNvbihiYXNlVXJsLCB7XG4gICAgICAgIG1ldGhvZDogJ1BPU1QnLFxuICAgICAgICBoZWFkZXJzOiB7ICdDb250ZW50LVR5cGUnOiAnYXBwbGljYXRpb24vanNvbicgfSxcbiAgICAgICAgYm9keTogSlNPTi5zdHJpbmdpZnkoZGF0YSlcbiAgICAgIH0pXG4gICAgICBzZXRJdGVtcyhwcmV2ID0+IFsuLi5wcmV2LCByZXMuZGF0YSB8fCByZXNdKVxuICAgICAgb25TdWNjZXNzUmVmLmN1cnJlbnQ/LigpXG4gICAgICByZXR1cm4gcmVzLmRhdGEgfHwgcmVzXG4gICAgfSBjYXRjaCAoZXJyKSB7XG4gICAgICBzZXRFcnJvcihlcnIpXG4gICAgICBvbkVycm9yUmVmLmN1cnJlbnQ/LihlcnIpXG4gICAgfSBmaW5hbGx5IHtcbiAgICAgIHNldExvYWRpbmcoZmFsc2UpXG4gICAgfVxuICB9LCBbYmFzZVVybF0pXG5cbiAgY29uc3QgdXBkYXRlSXRlbSA9IHVzZUNhbGxiYWNrKGFzeW5jIChpZDogc3RyaW5nLCBkYXRhOiBQYXJ0aWFsPFQ+KSA9PiB7XG4gICAgdHJ5IHtcbiAgICAgIHNldExvYWRpbmcodHJ1ZSlcbiAgICAgIGNvbnN0IHJlcyA9IGF3YWl0IGZldGNoSnNvbihgJHtiYXNlVXJsfS8ke2lkfWAsIHtcbiAgICAgICAgbWV0aG9kOiAnUFVUJyxcbiAgICAgICAgaGVhZGVyczogeyAnQ29udGVudC1UeXBlJzogJ2FwcGxpY2F0aW9uL2pzb24nIH0sXG4gICAgICAgIGJvZHk6IEpTT04uc3RyaW5naWZ5KGRhdGEpXG4gICAgICB9KVxuICAgICAgc2V0SXRlbXMocHJldiA9PiBwcmV2Lm1hcChpdGVtID0+IChpdGVtIGFzIGFueSkuaWQgPT09IGlkID8gKHJlcy5kYXRhIHx8IHJlcykgOiBpdGVtKSlcbiAgICAgIG9uU3VjY2Vzc1JlZi5jdXJyZW50Py4oKVxuICAgICAgcmV0dXJuIHJlcy5kYXRhIHx8IHJlc1xuICAgIH0gY2F0Y2ggKGVycikge1xuICAgICAgc2V0RXJyb3IoZXJyKVxuICAgICAgb25FcnJvclJlZi5jdXJyZW50Py4oZXJyKVxuICAgIH0gZmluYWxseSB7XG4gICAgICBzZXRMb2FkaW5nKGZhbHNlKVxuICAgIH1cbiAgfSwgW2Jhc2VVcmxdKVxuXG4gIGNvbnN0IGRlbGV0ZUl0ZW0gPSB1c2VDYWxsYmFjayhhc3luYyAoaWQ6IHN0cmluZykgPT4ge1xuICAgIHRyeSB7XG4gICAgICBzZXRMb2FkaW5nKHRydWUpXG4gICAgICBhd2FpdCBmZXRjaEpzb24oYCR7YmFzZVVybH0vJHtpZH1gLCB7IG1ldGhvZDogJ0RFTEVURScgfSlcbiAgICAgIHNldEl0ZW1zKHByZXYgPT4gcHJldi5maWx0ZXIoaXRlbSA9PiAoaXRlbSBhcyBhbnkpLmlkICE9PSBpZCkpXG4gICAgICBvblN1Y2Nlc3NSZWYuY3VycmVudD8uKClcbiAgICB9IGNhdGNoIChlcnIpIHtcbiAgICAgIHNldEVycm9yKGVycilcbiAgICAgIG9uRXJyb3JSZWYuY3VycmVudD8uKGVycilcbiAgICB9IGZpbmFsbHkge1xuICAgICAgc2V0TG9hZGluZyhmYWxzZSlcbiAgICB9XG4gIH0sIFtiYXNlVXJsXSlcblxuICByZXR1cm4ge1xuICAgIGl0ZW1zLCBsb2FkaW5nLCBlcnJvciwgZmV0Y2hJdGVtcywgY3JlYXRlSXRlbSwgdXBkYXRlSXRlbSwgZGVsZXRlSXRlbVxuICB9XG59Il0sIm5hbWVzIjpbInVzZVN0YXRlIiwidXNlQ2FsbGJhY2siLCJ1c2VSZWYiLCJ1c2VDcnVkIiwiYmFzZVVybCIsIm9uU3VjY2VzcyIsIm9uRXJyb3IiLCJpdGVtcyIsInNldEl0ZW1zIiwibG9hZGluZyIsInNldExvYWRpbmciLCJlcnJvciIsInNldEVycm9yIiwib25TdWNjZXNzUmVmIiwib25FcnJvclJlZiIsImN1cnJlbnQiLCJmZXRjaEpzb24iLCJ1cmwiLCJvcHRpb25zIiwicmVzIiwiZmV0Y2giLCJvayIsImVyciIsImpzb24iLCJjYXRjaCIsInN0YXR1c1RleHQiLCJmZXRjaEl0ZW1zIiwiZGF0YSIsImNyZWF0ZUl0ZW0iLCJtZXRob2QiLCJoZWFkZXJzIiwiYm9keSIsIkpTT04iLCJzdHJpbmdpZnkiLCJwcmV2IiwidXBkYXRlSXRlbSIsImlkIiwibWFwIiwiaXRlbSIsImRlbGV0ZUl0ZW0iLCJmaWx0ZXIiXSwiaWdub3JlTGlzdCI6W10sInNvdXJjZVJvb3QiOiIifQ==\n//# sourceURL=webpack-internal:///(ssr)/./lib/hooks/use-crud.ts\n");
 
 /***/ }),
 
@@ -436,72 +436,6 @@ module.exports = require("@prisma/client");
 
 /***/ }),
 
-/***/ "assert":
-/*!*************************!*\
-  !*** external "assert" ***!
-  \*************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("assert");
-
-/***/ }),
-
-/***/ "crypto":
-/*!*************************!*\
-  !*** external "crypto" ***!
-  \*************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("crypto");
-
-/***/ }),
-
-/***/ "events":
-/*!*************************!*\
-  !*** external "events" ***!
-  \*************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("events");
-
-/***/ }),
-
-/***/ "fs":
-/*!*********************!*\
-  !*** external "fs" ***!
-  \*********************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("fs");
-
-/***/ }),
-
-/***/ "http":
-/*!***********************!*\
-  !*** external "http" ***!
-  \***********************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("http");
-
-/***/ }),
-
-/***/ "https":
-/*!************************!*\
-  !*** external "https" ***!
-  \************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("https");
-
-/***/ }),
-
 /***/ "next/dist/compiled/next-server/app-page.runtime.dev.js":
 /*!*************************************************************************!*\
   !*** external "next/dist/compiled/next-server/app-page.runtime.dev.js" ***!
@@ -510,39 +444,6 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("next/dist/compiled/next-server/app-page.runtime.dev.js");
-
-/***/ }),
-
-/***/ "node:os":
-/*!**************************!*\
-  !*** external "node:os" ***!
-  \**************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:os");
-
-/***/ }),
-
-/***/ "node:process":
-/*!*******************************!*\
-  !*** external "node:process" ***!
-  \*******************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:process");
-
-/***/ }),
-
-/***/ "node:tty":
-/*!***************************!*\
-  !*** external "node:tty" ***!
-  \***************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("node:tty");
 
 /***/ }),
 
@@ -555,61 +456,6 @@ module.exports = require("node:tty");
 "use strict";
 module.exports = require("path");
 
-/***/ }),
-
-/***/ "stream":
-/*!*************************!*\
-  !*** external "stream" ***!
-  \*************************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("stream");
-
-/***/ }),
-
-/***/ "tty":
-/*!**********************!*\
-  !*** external "tty" ***!
-  \**********************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("tty");
-
-/***/ }),
-
-/***/ "url":
-/*!**********************!*\
-  !*** external "url" ***!
-  \**********************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("url");
-
-/***/ }),
-
-/***/ "util":
-/*!***********************!*\
-  !*** external "util" ***!
-  \***********************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("util");
-
-/***/ }),
-
-/***/ "zlib":
-/*!***********************!*\
-  !*** external "zlib" ***!
-  \***********************/
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("zlib");
-
 /***/ })
 
 };
@@ -619,7 +465,7 @@ module.exports = require("zlib");
 var __webpack_require__ = require("../../webpack-runtime.js");
 __webpack_require__.C(exports);
 var __webpack_exec__ = (moduleId) => (__webpack_require__(__webpack_require__.s = moduleId))
-var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/next","vendor-chunks/@radix-ui","vendor-chunks/tailwind-merge","vendor-chunks/class-variance-authority","vendor-chunks/@swc","vendor-chunks/clsx","vendor-chunks/@floating-ui","vendor-chunks/lucide-react","vendor-chunks/mime-db","vendor-chunks/axios","vendor-chunks/follow-redirects","vendor-chunks/debug","vendor-chunks/tslib","vendor-chunks/react-remove-scroll","vendor-chunks/get-intrinsic","vendor-chunks/form-data","vendor-chunks/asynckit","vendor-chunks/aria-hidden","vendor-chunks/react-remove-scroll-bar","vendor-chunks/combined-stream","vendor-chunks/supports-color","vendor-chunks/mime-types","vendor-chunks/use-callback-ref","vendor-chunks/proxy-from-env","vendor-chunks/use-sidecar","vendor-chunks/ms","vendor-chunks/react-style-singleton","vendor-chunks/has-symbols","vendor-chunks/delayed-stream","vendor-chunks/function-bind","vendor-chunks/es-set-tostringtag","vendor-chunks/get-proto","vendor-chunks/call-bind-apply-helpers","vendor-chunks/dunder-proto","vendor-chunks/math-intrinsics","vendor-chunks/es-errors","vendor-chunks/gopd","vendor-chunks/get-nonce","vendor-chunks/es-define-property","vendor-chunks/hasown","vendor-chunks/has-tostringtag","vendor-chunks/es-object-atoms","vendor-chunks/zod"], () => (__webpack_exec__("(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fmodels%2Fpage&page=%2Fmodels%2Fpage&appPaths=%2Fmodels%2Fpage&pagePath=private-next-app-dir%2Fmodels%2Fpage.tsx&appDir=%2FUsers%2Fregan-mac%2FDownloads%2FMUD%2Fproto-fe%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2FUsers%2Fregan-mac%2FDownloads%2FMUD%2Fproto-fe&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!")));
+var __webpack_exports__ = __webpack_require__.X(0, ["vendor-chunks/next","vendor-chunks/zod","vendor-chunks/@radix-ui","vendor-chunks/@floating-ui","vendor-chunks/tailwind-merge","vendor-chunks/lucide-react","vendor-chunks/class-variance-authority","vendor-chunks/@swc","vendor-chunks/clsx","vendor-chunks/tslib","vendor-chunks/react-remove-scroll","vendor-chunks/aria-hidden","vendor-chunks/react-remove-scroll-bar","vendor-chunks/use-callback-ref","vendor-chunks/use-sidecar","vendor-chunks/react-style-singleton","vendor-chunks/get-nonce"], () => (__webpack_exec__("(rsc)/./node_modules/next/dist/build/webpack/loaders/next-app-loader/index.js?name=app%2Fmodels%2Fpage&page=%2Fmodels%2Fpage&appPaths=%2Fmodels%2Fpage&pagePath=private-next-app-dir%2Fmodels%2Fpage.tsx&appDir=%2FUsers%2Fregan-mac%2FDownloads%2FMUD%2Fproto-fe%2Fapp&pageExtensions=tsx&pageExtensions=ts&pageExtensions=jsx&pageExtensions=js&rootDir=%2FUsers%2Fregan-mac%2FDownloads%2FMUD%2Fproto-fe&isDev=true&tsconfigPath=tsconfig.json&basePath=&assetPrefix=&nextConfigOutput=&preferredRegion=&middlewareConfig=e30%3D!")));
 module.exports = __webpack_exports__;
 
 })();
