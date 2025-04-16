@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useCallback, useRef } from 'react'
-import { BaseTab } from '../ui/base-tab'
+import { useEffect, useCallback, useRef, forwardRef } from 'react'
+import { BaseTab, BaseTabRef } from '../ui/base-tab'
 import { useCrud } from '@/lib/hooks/use-crud'
 import { Dataset } from '@/types/models'
 
@@ -9,7 +9,7 @@ interface DatasetsTabProps {
   searchQuery?: string
 }
 
-export function DatasetsTab({ searchQuery = '' }: DatasetsTabProps) {
+export const DatasetsTab = forwardRef<BaseTabRef, DatasetsTabProps>(({ searchQuery = '' }, ref) => {
   // Use a ref to store the error handler to prevent dependency changes
   const handleErrorRef = useRef((error: any) => {
     console.error('Error:', error)
@@ -49,18 +49,15 @@ export function DatasetsTab({ searchQuery = '' }: DatasetsTabProps) {
     )
   }
 
-  const renderDataset = useCallback((dataset: Dataset) => (
-    <div className="flex flex-col gap-1">
-      <h3 className="font-semibold">{dataset.name}</h3>
-      <p className="text-sm text-gray-500">Description: {dataset.description}</p>
-      <p className="text-sm text-gray-500">Created: {new Date(dataset.createdAt).toLocaleDateString()}</p>
-    </div>
-  ), [])
-
   const handleAdd = useCallback(() => {
     return createDataset({ 
       name: 'New Dataset', 
-      description: 'Dataset description' 
+      description: 'Dataset description',
+      type: 'text',
+      format: 'txt',
+      size: 0,
+      path: '',
+      metadata: {}
     })
   }, [createDataset])
 
@@ -68,16 +65,17 @@ export function DatasetsTab({ searchQuery = '' }: DatasetsTabProps) {
     updateDataset(dataset.id, dataset)
   }, [updateDataset])
 
-  const handleDelete = useCallback((dataset: Dataset) => {
-    deleteDataset(dataset.id)
+  const handleDelete = useCallback((id: string) => {
+    deleteDataset(id)
   }, [deleteDataset])
 
   if (loading) return <div className="p-4">Loading...</div>
   if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>
 
   return (
-    <BaseTab<Dataset>
-      endpoint="/api/datasets"
+    <BaseTab
+      ref={ref}
+      items={datasets}
       filterModels={filterDatasets}
       columns={[
         { key: 'name', label: 'Name' },
@@ -88,9 +86,9 @@ export function DatasetsTab({ searchQuery = '' }: DatasetsTabProps) {
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
-      renderItem={renderDataset}
       addButtonText="Add Dataset"
       isLoading={loading}
+      hideAddButton={true}
     />
   )
-}
+})

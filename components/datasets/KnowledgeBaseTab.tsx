@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useCallback, useRef } from 'react'
-import { BaseTab } from '../ui/base-tab'
+import { useEffect, useCallback, useRef, forwardRef } from 'react'
+import { BaseTab, BaseTabRef } from '../ui/base-tab'
 import { useCrud } from '@/lib/hooks/use-crud'
 import { KnowledgeBase } from '@/types/models'
 
@@ -9,7 +9,7 @@ interface KnowledgeBaseTabProps {
   searchQuery?: string
 }
 
-export function KnowledgeBaseTab({ searchQuery = '' }: KnowledgeBaseTabProps) {
+export const KnowledgeBaseTab = forwardRef<BaseTabRef, KnowledgeBaseTabProps>(({ searchQuery = '' }, ref) => {
   // Use a ref to store the error handler to prevent dependency changes
   const handleErrorRef = useRef((error: any) => {
     console.error('Error:', error)
@@ -49,18 +49,11 @@ export function KnowledgeBaseTab({ searchQuery = '' }: KnowledgeBaseTabProps) {
     )
   }
 
-  const renderKnowledgeBase = useCallback((knowledgeBase: KnowledgeBase) => (
-    <div className="flex flex-col gap-1">
-      <h3 className="font-semibold">{knowledgeBase.name}</h3>
-      <p className="text-sm text-gray-500">Description: {knowledgeBase.description}</p>
-      <p className="text-sm text-gray-500">Created: {new Date(knowledgeBase.createdAt).toLocaleDateString()}</p>
-    </div>
-  ), [])
-
   const handleAdd = useCallback(() => {
     return createKnowledgeBase({ 
       name: 'New Knowledge Base', 
-      description: 'Knowledge base description' 
+      description: 'Knowledge base description',
+      type: 'text'
     })
   }, [createKnowledgeBase])
 
@@ -68,16 +61,17 @@ export function KnowledgeBaseTab({ searchQuery = '' }: KnowledgeBaseTabProps) {
     updateKnowledgeBase(knowledgeBase.id, knowledgeBase)
   }, [updateKnowledgeBase])
 
-  const handleDelete = useCallback((knowledgeBase: KnowledgeBase) => {
-    deleteKnowledgeBase(knowledgeBase.id)
+  const handleDelete = useCallback((id: string) => {
+    deleteKnowledgeBase(id)
   }, [deleteKnowledgeBase])
 
   if (loading) return <div className="p-4">Loading...</div>
   if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>
 
   return (
-    <BaseTab<KnowledgeBase>
-      endpoint="/api/knowledge-bases"
+    <BaseTab
+      ref={ref}
+      items={knowledgeBases}
       filterModels={filterKnowledgeBases}
       columns={[
         { key: 'name', label: 'Name' },
@@ -88,9 +82,10 @@ export function KnowledgeBaseTab({ searchQuery = '' }: KnowledgeBaseTabProps) {
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
-      renderItem={renderKnowledgeBase}
       addButtonText="Add Knowledge Base"
       isLoading={loading}
+      hideAddButton={true}
+      pageSize={7}
     />
   )
-}
+})

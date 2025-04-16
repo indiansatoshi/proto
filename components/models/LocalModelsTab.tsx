@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { BaseTab } from '../ui/base-tab'
+import { useEffect, useState, forwardRef } from 'react'
+import { BaseTab, BaseTabRef } from '../ui/base-tab'
 import { Model } from '@/types/models'
 import { Form } from '../ui/form'
 import { FormField } from '../ui/form-field'
@@ -22,7 +22,7 @@ interface LocalModelsTabProps {
   searchQuery?: string
 }
 
-export function LocalModelsTab({ searchQuery = '' }: LocalModelsTabProps) {
+export const LocalModelsTab = forwardRef<BaseTabRef, LocalModelsTabProps>(({ searchQuery = '' }, ref) => {
   const [models, setModels] = useState<Model[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -78,14 +78,13 @@ export function LocalModelsTab({ searchQuery = '' }: LocalModelsTabProps) {
     return true
   }
 
-  const renderModel = (model: LocalModel) => (
-    <div className="flex flex-col gap-1">
-      <h3 className="font-semibold">{model.name}</h3>
-      <p className="text-sm text-gray-500">Type: {model.type}</p>
-      <p className="text-sm text-gray-500">Provider: {model.provider}</p>
-      <p className="text-sm text-gray-500">Path: {model.source}</p>
-    </div>
-  )
+  const filterModels = (models: LocalModel[]) => {
+    if (!searchQuery) return models
+    return models.filter(model => 
+      model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      model.type.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+  }
 
   const renderAddForm = ({ onSubmit, onCancel, isLoading }: {
     onSubmit: (data: Partial<LocalModel>) => void
@@ -199,20 +198,13 @@ export function LocalModelsTab({ searchQuery = '' }: LocalModelsTabProps) {
     )
   }
 
-  const filterModels = (models: LocalModel[]) => {
-    if (!searchQuery) return models
-    return models.filter(model => 
-      model.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      model.type.toLowerCase().includes(searchQuery.toLowerCase())
-    )
-  }
-
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error}</div>
+  if (loading) return <div className="p-4">Loading...</div>
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>
 
   return (
-    <BaseTab<LocalModel>
-      endpoint="/api/models/local"
+    <BaseTab
+      ref={ref}
+      items={models}
       filterModels={filterModels}
       columns={[
         { key: 'name', label: 'Name' },
@@ -221,17 +213,14 @@ export function LocalModelsTab({ searchQuery = '' }: LocalModelsTabProps) {
         { key: 'size', label: 'Size' },
         { key: 'lastModified', label: 'Last Modified' }
       ]}
-      onAdd={() => {
-        // This is a placeholder function that will be replaced by the renderAddForm
-        console.log('Add button clicked')
-      }}
-      onEdit={(item) => handleUpdate(item.id, item as any)}
+      onAdd={handleCreate}
+      onEdit={handleUpdate}
       onDelete={handleDelete}
-      renderItem={renderModel}
       addButtonText="Add Local Model"
       renderAddForm={renderAddForm}
       renderEditForm={renderEditForm}
       isLoading={loading}
+      hideAddButton={true}
     />
   )
-}
+})

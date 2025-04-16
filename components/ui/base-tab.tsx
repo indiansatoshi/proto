@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, forwardRef, useImperativeHandle, useEffect } from 'react'
 import { Button } from './button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './dialog'
 import { Form } from './form'
@@ -7,24 +7,34 @@ import { FormField } from './form-field'
 export interface BaseTabProps<T> {
   title?: string
   description?: string
-  endpoint: string
+  endpoint?: string
+  items?: T[]
   filterModels?: (models: T[]) => T[]
   columns: { key: string; label: string }[]
-  onAdd?: () => void
-  onEdit?: (item: T) => void
-  onDelete?: (id: string) => void
+  onAdd?: (data: Partial<T>) => void | Promise<void>
+  onEdit?: (id: string, data: Partial<T>) => void | Promise<void>
+  onDelete?: (id: string) => void | Promise<void>
   renderItem?: (item: T) => React.ReactNode
   addButtonText?: string
   className?: string
   renderAddForm?: (props: { onSubmit: (data: Partial<T>) => void; onCancel: () => void; isLoading: boolean }) => React.ReactNode
   renderEditForm?: (props: { item: T; onSubmit: (data: Partial<T>) => void; onCancel: () => void; isLoading: boolean }) => React.ReactNode
   isLoading?: boolean
+  hideAddButton?: boolean
+  pageSize?: number
 }
 
-export function BaseTab<T>({
+export interface BaseTabRef {
+  setIsAddDialogOpen: (open: boolean) => void
+  setIsEditDialogOpen: (open: boolean) => void
+  setSelectedItem: (item: any | null) => void
+  openAddDialog: () => void
+}
+
+export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
   title,
   description,
-  endpoint,
+  items = [],
   filterModels,
   columns,
   onAdd,
@@ -35,36 +45,27 @@ export function BaseTab<T>({
   className,
   renderAddForm,
   renderEditForm,
-  isLoading = false
-}: BaseTabProps<T>) {
-  const [items, setItems] = useState<T[]>([])
+  isLoading = false,
+  hideAddButton = false,
+  pageSize = 7
+}, ref) => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
-  const [selectedItem, setSelectedItem] = useState<T | null>(null)
+  const [selectedItem, setSelectedItem] = useState<any | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
 
+  // Reset page when items or filter changes
   useEffect(() => {
-    fetchItems()
-  }, [endpoint])
+    setCurrentPage(1)
+  }, [items, filterModels])
 
-  const fetchItems = async () => {
-    try {
-      const response = await fetch(endpoint)
-      const data = await response.json()
-      setItems(Array.isArray(data) ? data : [])
-    } catch (error) {
-      console.error('Error fetching items:', error)
-      setItems([])
-    }
-  }
-
-  const handleAdd = async (data: Partial<T>) => {
+  const handleAdd = async (data: Partial<any>) => {
     setIsSubmitting(true)
     try {
       if (onAdd) {
-        await onAdd()
+        await onAdd(data)
       }
-      await fetchItems()
       setIsAddDialogOpen(false)
     } catch (error) {
       console.error('Error adding item:', error)
@@ -73,7 +74,7 @@ export function BaseTab<T>({
     }
   }
 
-  const handleEdit = (item: T) => {
+  const handleEdit = (item: any) => {
     setSelectedItem(item)
     setIsEditDialogOpen(true)
   }
@@ -82,16 +83,14 @@ export function BaseTab<T>({
     if (onDelete) {
       await onDelete(id)
     }
-    await fetchItems()
   }
 
-  const handleEditSubmit = async (data: Partial<T>) => {
+  const handleEditSubmit = async (data: Partial<any>) => {
     setIsSubmitting(true)
     try {
       if (onEdit && selectedItem) {
-        await onEdit(selectedItem)
+        await onEdit(selectedItem.id, data)
       }
-      await fetchItems()
       setIsEditDialogOpen(false)
     } catch (error) {
       console.error('Error updating item:', error)
@@ -104,6 +103,36 @@ export function BaseTab<T>({
   const safeItems = Array.isArray(items) ? items : []
   const filteredItems = filterModels ? filterModels(safeItems) : safeItems
 
+  // Pagination
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / pageSize))
+  const startIndex = (currentPage - 1) * pageSize
+  const endIndex = Math.min(startIndex + pageSize, filteredItems.length)
+  const currentItems = filteredItems.slice(startIndex, endIndex)
+
+  console.log('Pagination Debug:', {
+    totalItems: filteredItems.length,
+    pageSize,
+    currentPage,
+    startIndex,
+    endIndex,
+    totalPages,
+    itemsOnCurrentPage: currentItems.length
+  })
+
+  // Ensure current page is valid
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(Math.max(1, totalPages))
+    }
+  }, [currentPage, totalPages])
+
+  useImperativeHandle(ref, () => ({
+    setIsAddDialogOpen,
+    setIsEditDialogOpen,
+    setSelectedItem,
+    openAddDialog: () => setIsAddDialogOpen(true)
+  }))
+
   return (
     <div className={className}>
       <div className="flex justify-between items-center mb-6">
@@ -113,7 +142,11 @@ export function BaseTab<T>({
             {description && <p className="text-gray-500 mt-1">{description}</p>}
           </div>
         )}
-        <Button onClick={() => setIsAddDialogOpen(true)}>{addButtonText}</Button>
+        {!hideAddButton && (
+          <Button onClick={() => setIsAddDialogOpen(true)}>
+            {addButtonText}
+          </Button>
+        )}
       </div>
 
       <div className="bg-white rounded-lg shadow">
@@ -135,14 +168,23 @@ export function BaseTab<T>({
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredItems && filteredItems.length > 0 ? (
-                filteredItems.map((item, index) => (
-                  <tr key={index}>
-                    {columns.map((column) => (
-                      <td key={column.key} className="px-6 py-4 whitespace-nowrap">
-                        {renderItem ? renderItem(item) : (item as any)[column.key]}
+              {currentItems && currentItems.length > 0 ? (
+                currentItems.map((item, index) => (
+                  <tr key={item.id || index}>
+                    {renderItem ? (
+                      <td colSpan={columns.length} className="px-6 py-4 whitespace-nowrap">
+                        {renderItem(item)}
                       </td>
-                    ))}
+                    ) : (
+                      columns.map((column) => (
+                        <td key={column.key} className="px-6 py-4 whitespace-nowrap">
+                          {column.key === 'createdAt' ? 
+                            new Date(item[column.key]).toLocaleDateString() :
+                            item[column.key]
+                          }
+                        </td>
+                      ))
+                    )}
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Button
                         variant="ghost"
@@ -170,6 +212,38 @@ export function BaseTab<T>({
             </tbody>
           </table>
         </div>
+
+        {/* Pagination */}
+        {filteredItems.length > 0 && (
+          <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-gray-700">
+                Showing {startIndex + 1}-{endIndex} of {filteredItems.length} items
+              </span>
+              <span className="text-sm text-gray-500">
+                (Page {currentPage} of {totalPages})
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={currentPage === 1}
+              >
+                Previous
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={currentPage === totalPages}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -189,9 +263,9 @@ export function BaseTab<T>({
               onSubmit={(e) => {
                 e.preventDefault()
                 const formData = new FormData(e.currentTarget)
-                const data: Partial<T> = {}
+                const data: Partial<any> = {}
                 columns.forEach(column => {
-                  data[column.key as keyof T] = formData.get(column.key) as any
+                  data[column.key] = formData.get(column.key) as any
                 })
                 handleAdd(data)
               }}
@@ -228,9 +302,9 @@ export function BaseTab<T>({
                 onSubmit={(e) => {
                   e.preventDefault()
                   const formData = new FormData(e.currentTarget)
-                  const data: Partial<T> = {}
+                  const data: Partial<any> = {}
                   columns.forEach(column => {
-                    data[column.key as keyof T] = formData.get(column.key) as any
+                    data[column.key] = formData.get(column.key) as any
                   })
                   handleEditSubmit(data)
                 }}
@@ -251,4 +325,4 @@ export function BaseTab<T>({
       </Dialog>
     </div>
   )
-} 
+}) 

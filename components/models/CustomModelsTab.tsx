@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
-import { BaseTab } from '../ui/base-tab'
+import { useEffect, forwardRef } from 'react'
+import { BaseTab, BaseTabRef } from '../ui/base-tab'
 import { useCrud } from '@/lib/hooks/use-crud'
 import { Model } from '@/types/models'
 
@@ -9,7 +9,7 @@ interface CustomModelsTabProps {
   searchQuery?: string
 }
 
-export function CustomModelsTab({ searchQuery = '' }: CustomModelsTabProps) {
+export const CustomModelsTab = forwardRef<BaseTabRef, CustomModelsTabProps>(({ searchQuery = '' }, ref) => {
   const {
     items: models,
     loading,
@@ -36,19 +36,6 @@ export function CustomModelsTab({ searchQuery = '' }: CustomModelsTabProps) {
       model.type.toLowerCase().includes(searchQuery.toLowerCase()) ||
       model.description?.toLowerCase().includes(searchQuery.toLowerCase())
     )
-  }
-
-  const renderModel = (model: Model) => (
-    <div className="flex flex-col gap-1">
-      <h3 className="font-semibold">{model.name}</h3>
-      <p className="text-sm text-gray-500">Type: {model.type}</p>
-      <p className="text-sm text-gray-500">Provider: {model.provider}</p>
-      <p className="text-sm text-gray-500">Architecture: {model.architecture}</p>
-    </div>
-  )
-
-  const handleEdit = (model: Model) => {
-    updateModel(model.id, model)
   }
 
   const renderAddForm = ({ onSubmit, onCancel, isLoading }: {
@@ -105,12 +92,25 @@ export function CustomModelsTab({ searchQuery = '' }: CustomModelsTabProps) {
     </div>
   )
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
+  const handleAdd = async (data: Partial<Model>) => {
+    await createModel(data)
+  }
+
+  const handleEdit = async (id: string, data: Partial<Model>) => {
+    await updateModel(id, data)
+  }
+
+  const handleDelete = async (id: string) => {
+    await deleteModel(id)
+  }
+
+  if (loading) return <div className="p-4">Loading...</div>
+  if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>
 
   return (
-    <BaseTab<Model>
-      endpoint="/api/models/custom"
+    <BaseTab
+      ref={ref}
+      items={models}
       filterModels={filterModels}
       columns={[
         { key: 'name', label: 'Name' },
@@ -118,17 +118,14 @@ export function CustomModelsTab({ searchQuery = '' }: CustomModelsTabProps) {
         { key: 'description', label: 'Description' },
         { key: 'createdAt', label: 'Created At' }
       ]}
-      onAdd={() => {
-        // This is a placeholder function that will be replaced by the renderAddForm
-        console.log('Add button clicked')
-      }}
+      onAdd={handleAdd}
       onEdit={handleEdit}
-      onDelete={deleteModel}
-      renderItem={renderModel}
+      onDelete={handleDelete}
       addButtonText="Add Custom Model"
       renderAddForm={renderAddForm}
       renderEditForm={renderEditForm}
       isLoading={loading}
+      hideAddButton={true}
     />
   )
-}
+})

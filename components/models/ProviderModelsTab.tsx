@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect } from 'react'
-import { BaseTab } from '../ui/base-tab'
+import { useEffect, forwardRef } from 'react'
+import { BaseTab, BaseTabRef } from '../ui/base-tab'
 import { useCrud } from '@/lib/hooks/use-crud'
 import { Model } from '@/types/models'
 import { Form } from '../ui/form'
@@ -11,7 +11,7 @@ interface ProviderModelsTabProps {
   searchQuery?: string
 }
 
-export function ProviderModelsTab({ searchQuery = '' }: ProviderModelsTabProps) {
+export const ProviderModelsTab = forwardRef<BaseTabRef, ProviderModelsTabProps>(({ searchQuery = '' }, ref) => {
   const {
     items: models,
     loading,
@@ -39,15 +39,6 @@ export function ProviderModelsTab({ searchQuery = '' }: ProviderModelsTabProps) 
       model.provider?.toLowerCase().includes(searchQuery.toLowerCase())
     )
   }
-
-  const renderModel = (model: Model) => (
-    <div className="flex flex-col gap-1">
-      <h3 className="font-semibold">{model.name}</h3>
-      <p className="text-sm text-gray-500">Type: {model.type}</p>
-      <p className="text-sm text-gray-500">Provider: {model.provider}</p>
-      <p className="text-sm text-gray-500">Model ID: {model.modelId}</p>
-    </div>
-  )
 
   const renderAddForm = ({ onSubmit, onCancel, isLoading }: {
     onSubmit: (data: Partial<Model>) => void
@@ -195,12 +186,25 @@ export function ProviderModelsTab({ searchQuery = '' }: ProviderModelsTabProps) 
     </Form>
   )
 
-  if (loading) return <div>Loading...</div>
-  if (error) return <div>Error: {error.message}</div>
+  const handleAdd = async (data: Partial<Model>) => {
+    await createModel(data)
+  }
+
+  const handleEdit = async (id: string, data: Partial<Model>) => {
+    await updateModel(id, data)
+  }
+
+  const handleDelete = async (id: string) => {
+    await deleteModel(id)
+  }
+
+  if (loading) return <div className="p-4">Loading...</div>
+  if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>
 
   return (
-    <BaseTab<Model>
-      endpoint="/api/models/provider"
+    <BaseTab
+      ref={ref}
+      items={models}
       filterModels={filterModels}
       columns={[
         { key: 'name', label: 'Name' },
@@ -209,17 +213,14 @@ export function ProviderModelsTab({ searchQuery = '' }: ProviderModelsTabProps) 
         { key: 'modelId', label: 'Model ID' },
         { key: 'createdAt', label: 'Created At' }
       ]}
-      onAdd={() => {
-        // This is a placeholder function that will be replaced by the renderAddForm
-        console.log('Add button clicked')
-      }}
-      onEdit={(item) => updateModel(item.id, item)}
-      onDelete={deleteModel}
-      renderItem={renderModel}
+      onAdd={handleAdd}
+      onEdit={handleEdit}
+      onDelete={handleDelete}
       addButtonText="Add Provider Model"
       renderAddForm={renderAddForm}
       renderEditForm={renderEditForm}
       isLoading={loading}
+      hideAddButton={true}
     />
   )
-}
+})

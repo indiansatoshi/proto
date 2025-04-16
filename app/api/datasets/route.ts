@@ -4,8 +4,17 @@ import { prisma } from '@/lib/prisma'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 
 export async function GET() {
-  // TODO: Implement actual dataset fetching logic
-  return NextResponse.json([])
+  try {
+    const datasets = await prisma.dataset.findMany({
+      orderBy: {
+        updatedAt: 'desc'
+      }
+    })
+    return NextResponse.json(datasets)
+  } catch (error) {
+    console.error('Error fetching datasets:', error)
+    return NextResponse.json({ error: 'Failed to fetch datasets' }, { status: 500 })
+  }
 }
 
 export async function POST(request: NextRequest) {

@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useCallback, useRef } from 'react'
-import { BaseTab } from '../ui/base-tab'
+import { useEffect, useCallback, useRef, forwardRef } from 'react'
+import { BaseTab, BaseTabRef } from '../ui/base-tab'
 import { useCrud } from '@/lib/hooks/use-crud'
 import { File } from '@/types/models'
 
@@ -9,7 +9,7 @@ interface FilesTabProps {
   searchQuery?: string
 }
 
-export function FilesTab({ searchQuery = '' }: FilesTabProps) {
+export const FilesTab = forwardRef<BaseTabRef, FilesTabProps>(({ searchQuery = '' }, ref) => {
   // Use a ref to store the error handler to prevent dependency changes
   const handleErrorRef = useRef((error: any) => {
     console.error('Error:', error)
@@ -48,15 +48,6 @@ export function FilesTab({ searchQuery = '' }: FilesTabProps) {
     )
   }
 
-  const renderFile = useCallback((file: File) => (
-    <div className="flex flex-col gap-1">
-      <h3 className="font-semibold">{file.name}</h3>
-      <p className="text-sm text-gray-500">Type: {file.type}</p>
-      <p className="text-sm text-gray-500">Size: {file.size} bytes</p>
-      <p className="text-sm text-gray-500">Created: {new Date(file.createdAt).toLocaleDateString()}</p>
-    </div>
-  ), [])
-
   const handleAdd = useCallback(() => {
     return createFile({ 
       name: 'New File', 
@@ -69,16 +60,17 @@ export function FilesTab({ searchQuery = '' }: FilesTabProps) {
     updateFile(file.id, file)
   }, [updateFile])
 
-  const handleDelete = useCallback((file: File) => {
-    deleteFile(file.id)
+  const handleDelete = useCallback((id: string) => {
+    deleteFile(id)
   }, [deleteFile])
 
   if (loading) return <div className="p-4">Loading...</div>
   if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>
 
   return (
-    <BaseTab<File>
-      endpoint="/api/files"
+    <BaseTab
+      ref={ref}
+      items={files}
       filterModels={filterFiles}
       columns={[
         { key: 'name', label: 'Name' },
@@ -89,9 +81,9 @@ export function FilesTab({ searchQuery = '' }: FilesTabProps) {
       onAdd={handleAdd}
       onEdit={handleEdit}
       onDelete={handleDelete}
-      renderItem={renderFile}
       addButtonText="Upload File"
       isLoading={loading}
+      hideAddButton={true}
     />
   )
-}
+})

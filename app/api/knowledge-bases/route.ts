@@ -7,8 +7,17 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
 const prisma = new PrismaClient()
 
 export async function GET() {
-  // TODO: Implement actual knowledge base fetching logic
-  return NextResponse.json([])
+  try {
+    const knowledgeBases = await prisma.knowledgeBase.findMany({
+      orderBy: {
+        updatedAt: 'desc'
+      }
+    })
+    return NextResponse.json(knowledgeBases)
+  } catch (error) {
+    console.error('Error fetching knowledge bases:', error)
+    return NextResponse.json({ error: 'Failed to fetch knowledge bases' }, { status: 500 })
+  }
 }
 
 export async function POST(request: NextRequest) {
