@@ -1,0 +1,14 @@
+{
+  "style": "default",
+  "components": [
+    "button",
+    "input",
+    "tabs",
+    "navbar",
+    "card",
+    "dialog",
+    "form",
+    "table",
+    "toast"
+  ]
+}

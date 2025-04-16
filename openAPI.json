@@ -1,0 +1,2920 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "AI Knowledge & Model Management API",
+    "description": "API for managing knowledge bases, models, and vectorization operations. Features include knowledge base management, model management, and vectorization processes.",
+    "version": "1.0.0",
+    "license": {
+      "name": "Apache 2.0",
+      "url": "https://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "contact": {
+      "name": "API Support",
+      "email": "support@example.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.example.com/v1",
+      "description": "Production server"
+    },
+    {
+      "url": "https://dev-api.example.com/v1",
+      "description": "Development server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "description": "Error code"
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message"
+          },
+          "details": {
+            "type": "object",
+            "description": "Additional error details"
+          }
+        }
+      },
+      "ValidationError": {
+        "type": "object",
+        "required": ["code", "message", "errors"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": ["VALIDATION_ERROR"],
+            "example": "Validation failed"
+          },
+          "message": {
+            "type": "string",
+            "example": "Validation failed"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["field", "message"],
+              "properties": {
+                "field": {
+                  "type": "string",
+                  "description": "The field that failed validation"
+                },
+                "message": {
+                  "type": "string",
+                  "description": "Description of the validation error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "filename": {
+            "type": "string"
+          },
+          "mimeType": {
+            "type": "string"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "storageLocation": {
+            "type": "string",
+            "description": "Location in MinIO storage"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "Dataset": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "KnowledgeBase": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "datasets": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Dataset"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Model": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+        "type": {
+          "type": "string",
+          "enum": ["embedding", "llm"]
+        },
+        "provider": {
+          "type": "string", 
+          "enum": ["local", "openai", "anthropic", "custom"]
+        },
+        "source": {
+            "type": "string",
+            "description": "Source of the model (for local models: ollama, for remote: API endpoint)"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ModelCatalogEntry": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["embedding", "llm"]
+          },
+          "provider": {
+            "type": "string"
+          },
+          "capabilities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "Chunk": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "content": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "startIndex": {
+            "type": "integer"
+          },
+          "endIndex": {
+            "type": "integer"
+          }
+        }
+      },
+      "Embedding": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "chunkId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "modelId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "vector": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "dimensions": {
+            "type": "integer"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InferenceRequest": {
+        "type": "object",
+        "required": ["modelId", "prompt"],
+        "properties": {
+          "modelId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "knowledgeBaseId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Optional knowledge base to use for context"
+          }
+        }
+      },
+      "InferenceResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "response": {
+            "type": "string"
+          },
+          "modelId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "promptTokens": {
+            "type": "integer"
+          },
+          "completionTokens": {
+            "type": "integer"
+          },
+          "totalTokens": {
+            "type": "integer"
+          },
+          "latency": {
+            "type": "number",
+            "format": "float"
+          },
+          "metadata": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "FineTuneRequest": {
+        "type": "object",
+        "required": ["baseModelId", "datasetId", "name"],
+        "properties": {
+          "baseModelId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "datasetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "hyperparameters": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      },
+      "FineTuneJob": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "baseModelId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "datasetId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["pending", "running", "completed", "failed"]
+          },
+          "progress": {
+            "type": "number",
+            "format": "float"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "completedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "resultModelId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
+      "ChunkingConfig": {
+        "type": "object",
+        "properties": {
+          "strategy": {
+            "type": "string",
+            "enum": ["fixed_size", "semantic", "hybrid"]
+          },
+          "size": {
+            "type": "integer",
+            "description": "For fixed_size strategy, chunk size in tokens"
+          },
+          "overlap": {
+            "type": "integer",
+            "description": "Overlap between chunks in tokens"
+          },
+          "parameters": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/files": {
+      "post": {
+        "summary": "Upload a file",
+        "description": "Upload a file to the storage system (MinIO). Supports various file formats including PDF, DOCX, TXT, CSV, etc.",
+        "operationId": "uploadFile",
+        "tags": ["Files"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": ["file"],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "metadata": {
+                    "type": "object",
+                    "additionalProperties": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "File uploaded successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/File"
+                },
+                "example": {
+                  "id": "550e8400-e29b-41d4-a716-446655440000",
+                  "filename": "example.pdf",
+                  "mimeType": "application/pdf",
+                  "size": 1024576,
+                  "createdAt": "2024-03-20T10:30:00Z",
+                  "storageLocation": "files/550e8400-e29b-41d4-a716-446655440000.pdf",
+                  "metadata": {
+                    "author": "John Doe",
+                    "category": "documentation"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "413": {
+            "description": "File too large",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List all files",
+        "description": "Get a list of all uploaded files",
+        "operationId": "listFiles",
+        "tags": ["Files"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by file type/mime type"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of files",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/File"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "data": [
+                    {
+                      "id": "550e8400-e29b-41d4-a716-446655440000",
+                      "filename": "example1.pdf",
+                      "mimeType": "application/pdf",
+                      "size": 1024576,
+                      "createdAt": "2024-03-20T10:30:00Z",
+                      "storageLocation": "files/550e8400-e29b-41d4-a716-446655440000.pdf",
+                      "metadata": {
+                        "author": "John Doe",
+                        "category": "documentation"
+                      }
+                    },
+                    {
+                      "id": "550e8400-e29b-41d4-a716-446655440001",
+                      "filename": "example2.txt",
+                      "mimeType": "text/plain",
+                      "size": 512000,
+                      "createdAt": "2024-03-20T11:30:00Z",
+                      "storageLocation": "files/550e8400-e29b-41d4-a716-446655440001.txt",
+                      "metadata": {
+                        "author": "Jane Smith",
+                        "category": "notes"
+                      }
+                    }
+                  ],
+                  "pagination": {
+                    "total": 2,
+                    "pages": 1,
+                    "page": 1,
+                    "limit": 20
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/files/{fileId}": {
+      "get": {
+        "summary": "Get file details",
+        "description": "Get details of a specific file",
+        "operationId": "getFile",
+        "tags": ["Files"],
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the file to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "File details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/File"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a file",
+        "description": "Delete a specific file from storage",
+        "operationId": "deleteFile",
+        "tags": ["Files"],
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the file to delete"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "File deleted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/datasets": {
+      "post": {
+        "summary": "Create a dataset",
+        "description": "Create a new dataset by grouping files",
+        "operationId": "createDataset",
+        "tags": ["Datasets"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "fileIds"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "fileIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "minItems": 1,
+                    "description": "IDs of files to include in this dataset"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "One or more files not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List all datasets",
+        "description": "Get a list of all datasets",
+        "operationId": "listDatasets",
+        "tags": ["Datasets"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of datasets",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Dataset"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/datasets/{datasetId}": {
+      "get": {
+        "summary": "Get dataset details",
+        "description": "Get details of a specific dataset",
+        "operationId": "getDataset",
+        "tags": ["Datasets"],
+        "parameters": [
+          {
+            "name": "datasetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the dataset to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Dataset details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a dataset",
+        "description": "Update a specific dataset",
+        "operationId": "updateDataset",
+        "tags": ["Datasets"],
+        "parameters": [
+          {
+            "name": "datasetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the dataset to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "fileIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "minItems": 1,
+                    "description": "IDs of files to include in this dataset"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Dataset updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Dataset"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a dataset",
+        "description": "Delete a specific dataset",
+        "operationId": "deleteDataset",
+        "tags": ["Datasets"],
+        "parameters": [
+          {
+            "name": "datasetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the dataset to delete"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Dataset deleted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/knowledge-bases": {
+      "post": {
+        "summary": "Create a knowledge base",
+        "description": "Create a new knowledge base by grouping datasets",
+        "operationId": "createKnowledgeBase",
+        "tags": ["Knowledge Bases"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "datasetIds"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "datasetIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "IDs of datasets to include in this knowledge base"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Knowledge base created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeBase"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "One or more datasets not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List all knowledge bases",
+        "description": "Get a list of all knowledge bases",
+        "operationId": "listKnowledgeBases",
+        "tags": ["Knowledge Bases"],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of knowledge bases",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/KnowledgeBase"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/knowledge-bases/{knowledgeBaseId}": {
+      "get": {
+        "summary": "Get knowledge base details",
+        "description": "Get details of a specific knowledge base",
+        "operationId": "getKnowledgeBase",
+        "tags": ["Knowledge Bases"],
+        "parameters": [
+          {
+            "name": "knowledgeBaseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the knowledge base to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Knowledge base details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeBase"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update a knowledge base",
+        "description": "Update a specific knowledge base",
+        "operationId": "updateKnowledgeBase",
+        "tags": ["Knowledge Bases"],
+        "parameters": [
+          {
+            "name": "knowledgeBaseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the knowledge base to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 100
+                  },
+                  "description": {
+                    "type": "string",
+                    "maxLength": 500
+                  },
+                  "datasetIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "IDs of datasets to include in this knowledge base"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Knowledge base updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/KnowledgeBase"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a knowledge base",
+        "description": "Delete a specific knowledge base",
+        "operationId": "deleteKnowledgeBase",
+        "tags": ["Knowledge Bases"],
+        "parameters": [
+          {
+            "name": "knowledgeBaseId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the knowledge base to delete"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Knowledge base deleted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/models/local": {
+      "post": {
+        "summary": "Pull a local model using Ollama",
+        "description": "Pull a model from Ollama and register it in the system",
+        "operationId": "pullLocalModel",
+        "tags": ["Models"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "type", "ollamaName"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name to register the model as"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["embedding", "llm"],
+                    "description": "Type of model"
+                  },
+                  "ollamaName": {
+                    "type": "string",
+                    "description": "Name of the model in Ollama"
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Model-specific parameters"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Model pull initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Model"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": ["pending", "downloading", "ready", "failed"]
+                        },
+                        "progress": {
+                          "type": "number",
+                          "format": "float"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/models/provider": {
+      "post": {
+        "summary": "Register a provider model",
+        "description": "Register a model from providers like OpenAI or Anthropic",
+        "operationId": "registerProviderModel",
+        "tags": ["Models"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "type", "provider", "modelId"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name to register the model as"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["embedding", "llm"],
+                    "description": "Type of model"
+                  },
+                  "provider": {
+                    "type": "string",
+                    "enum": ["openai", "anthropic"],
+                    "description": "Provider of the model"
+                  },
+                  "modelId": {
+                    "type": "string",
+                    "description": "ID of the model on the provider's platform"
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Model-specific parameters"
+                  },
+                  "apiKey": {
+                    "type": "string",
+                    "description": "API key for the provider (if not set in environment)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Provider model registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/models": {
+      "get": {
+        "summary": "List all models",
+        "description": "Get a list of all registered models",
+        "operationId": "listModels",
+        "tags": ["Models"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["embedding", "llm"]
+            },
+            "description": "Filter by model type"
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["local", "openai", "anthropic", "custom"]
+            },
+            "description": "Filter by provider"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of models",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Model"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/models/{modelId}": {
+      "get": {
+        "summary": "Get model details",
+        "description": "Get details of a specific model",
+        "operationId": "getModel",
+        "tags": ["Models"],
+        "parameters": [
+          {
+            "name": "modelId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the model to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Model"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "delete": {
+          "summary": "Delete a model",
+          "description": "Delete a specific model",
+          "operationId": "deleteModel",
+          "tags": ["Models"],
+          "parameters": [
+            {
+              "name": "modelId",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "description": "ID of the model to delete"
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Model deleted successfully"
+            },
+            "401": {
+              "$ref": "#/components/responses/Unauthorized"
+            },
+            "404": {
+              "$ref": "#/components/responses/NotFound"
+            },
+            "500": {
+              "$ref": "#/components/responses/InternalServerError"
+            }
+          }
+        }
+      }
+    },
+    "/model-catalog": {
+      "get": {
+        "summary": "Get model catalog",
+        "description": "Get a list of available models in the catalog",
+        "operationId": "getModelCatalog",
+        "tags": ["Model Catalog"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["embedding", "llm"]
+            },
+            "description": "Filter by model type"
+          },
+          {
+            "name": "provider",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter by provider"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Model catalog",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ModelCatalogEntry"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/inference": {
+      "post": {
+        "summary": "Run inference",
+        "description": "Run inference using a specific model",
+        "operationId": "runInference",
+        "tags": ["Inference"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InferenceRequest"
+              },
+              "example": {
+                "modelId": "550e8400-e29b-41d4-a716-446655440000",
+                "prompt": "What is the capital of France?",
+                "parameters": {
+                  "temperature": 0.7,
+                  "max_tokens": 100
+                },
+                "knowledgeBaseId": "550e8400-e29b-41d4-a716-446655440001"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Inference result",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InferenceResponse"
+                },
+                "example": {
+                  "id": "550e8400-e29b-41d4-a716-446655440002",
+                  "response": "The capital of France is Paris.",
+                  "modelId": "550e8400-e29b-41d4-a716-446655440000",
+                  "promptTokens": 7,
+                  "completionTokens": 8,
+                  "totalTokens": 15,
+                  "latency": 0.85,
+                  "metadata": {
+                    "model_version": "1.0",
+                    "confidence_score": 0.95
+                  },
+                  "createdAt": "2024-03-20T12:30:00Z"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Model not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/fine-tune": {
+      "post": {
+        "summary": "Start fine-tuning",
+        "description": "Start fine-tuning a model using a dataset",
+        "operationId": "startFineTune",
+        "tags": ["Fine-tuning"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FineTuneRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Fine-tuning job created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FineTuneJob"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Model or dataset not found",
+            "content": {
+              "application/json": {
+                "$ref": "#/components/schemas/Error"
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List fine-tuning jobs",
+        "description": "Get a list of all fine-tuning jobs",
+        "operationId": "listFineTuneJobs",
+        "tags": ["Fine-tuning"],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["pending", "running", "completed", "failed"]
+            },
+            "description": "Filter by job status"
+          },
+          {
+            "name": "modelId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by base model ID"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of fine-tuning jobs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/FineTuneJob"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/fine-tune/{jobId}": {
+      "get": {
+        "summary": "Get fine-tuning job details",
+        "description": "Get details of a specific fine-tuning job",
+        "operationId": "getFineTuneJob",
+        "tags": ["Fine-tuning"],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the fine-tuning job to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Fine-tuning job details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FineTuneJob"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Cancel fine-tuning job",
+        "description": "Cancel a specific fine-tuning job",
+        "operationId": "cancelFineTuneJob",
+        "tags": ["Fine-tuning"],
+        "parameters": [
+          {
+            "name": "jobId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the fine-tuning job to cancel"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Fine-tuning job cancelled successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "description": "Cannot cancel completed job",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/models/custom": {
+      "post": {
+        "summary": "Create a custom model",
+        "description": "Create a model from scratch with custom parameters",
+        "operationId": "createCustomModel",
+        "tags": ["Models"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["name", "type", "architecture"],
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the custom model"
+                  },
+                  "type": {
+                    "type": "string",
+                    "enum": ["embedding", "llm"],
+                    "description": "Type of model"
+                  },
+                  "architecture": {
+                    "type": "string",
+                    "description": "Architecture of the model"
+                  },
+                  "parameters": {
+                    "type": "object",
+                    "additionalProperties": true,
+                    "description": "Model-specific parameters"
+                  },
+                  "initial_weights": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Initial weights for the model (optional)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Custom model creation initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/Model"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": ["pending", "initializing", "ready", "failed"]
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/chunks": {
+      "post": {
+        "summary": "Chunk files",
+        "description": "Chunk files into manageable pieces for vectorization",
+        "operationId": "chunkFiles",
+        "tags": ["Vectorization"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["fileIds"],
+                "properties": {
+                  "fileIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "IDs of files to chunk"
+                  },
+                  "config": {
+                    "$ref": "#/components/schemas/ChunkingConfig"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Chunking initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["pending", "processing", "completed", "failed"]
+                    },
+                    "fileIds": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "format": "uuid"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "One or more files not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List chunks",
+        "description": "Get a list of chunks",
+        "operationId": "listChunks",
+        "tags": ["Vectorization"],
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by file ID"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of chunks",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Chunk"
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/chunks/{chunkId}": {
+      "get": {
+        "summary": "Get chunk details",
+        "description": "Get details of a specific chunk",
+        "operationId": "getChunk",
+        "tags": ["Vectorization"],
+        "parameters": [
+          {
+            "name": "chunkId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the chunk to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Chunk details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Chunk"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/embeddings": {
+      "post": {
+        "summary": "Generate embeddings",
+        "description": "Generate embeddings for chunks using a specific model",
+        "operationId": "generateEmbeddings",
+        "tags": ["Vectorization"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["chunkIds", "modelId"],
+                "properties": {
+                  "chunkIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "IDs of chunks to generate embeddings for"
+                  },
+                  "modelId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the embedding model to use"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Embedding generation initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["pending", "processing", "completed", "failed"]
+                    },
+                    "progress": {
+                      "type": "number",
+                      "format": "float"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Model or chunks not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "List embeddings",
+        "description": "Get a list of embeddings",
+        "operationId": "listEmbeddings",
+        "tags": ["Vectorization"],
+        "parameters": [
+          {
+            "name": "chunkId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by chunk ID"
+          },
+          {
+            "name": "modelId",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "Filter by model ID"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 1,
+              "minimum": 1
+            },
+            "description": "Page number for pagination"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 20,
+              "minimum": 1,
+              "maximum": 100
+            },
+            "description": "Number of items per page"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of embeddings",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "allOf": [
+                          {
+                            "$ref": "#/components/schemas/Embedding"
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "vector": {
+                                "type": "string",
+                                "description": "Base64 encoded vector (abbreviated for pagination)"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "pagination": {
+                      "type": "object",
+                      "properties": {
+                        "total": {
+                          "type": "integer"
+                        },
+                        "pages": {
+                          "type": "integer"
+                        },
+                        "page": {
+                          "type": "integer"
+                        },
+                        "limit": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/embeddings/{embeddingId}": {
+      "get": {
+        "summary": "Get embedding details",
+        "description": "Get details of a specific embedding",
+        "operationId": "getEmbedding",
+        "tags": ["Vectorization"],
+        "parameters": [
+          {
+            "name": "embeddingId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "description": "ID of the embedding to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Embedding details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Embedding"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/vector-store": {
+      "post": {
+        "summary": "Store embeddings in vector store",
+        "description": "Store generated embeddings in the vector store",
+        "operationId": "storeEmbeddings",
+        "tags": ["Vectorization"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["embeddingIds"],
+                "properties": {
+                  "embeddingIds": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "IDs of embeddings to store"
+                  },
+                  "collection": {
+                    "type": "string",
+                    "description": "Name of the vector store collection (optional)"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Storing embeddings initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "jobId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": ["pending", "processing", "completed", "failed"]
+                    },
+                    "progress": {
+                      "type": "number",
+                      "format": "float"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Embeddings not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/vector-store/search": {
+      "post": {
+        "summary": "Search vector store",
+        "description": "Search the vector store using a query embedding",
+        "operationId": "searchVectorStore",
+        "tags": ["Vectorization"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "oneOf": [
+                  {
+                    "required": ["query", "modelId"]
+                  },
+                  {
+                    "required": ["embeddingVector"]
+                  }
+                ],
+                "properties": {
+                  "query": {
+                    "type": "string",
+                    "description": "Text query to convert to embedding"
+                  },
+                  "modelId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "ID of the embedding model to use"
+                  },
+                  "embeddingVector": {
+                    "type": "array",
+                    "items": {
+                      "type": "number",
+                      "format": "float"
+                    },
+                    "description": "Direct embedding vector to search with"
+                  },
+                  "collection": {
+                    "type": "string",
+                    "description": "Name of the vector store collection to search"
+                  },
+                  "limit": {
+                    "type": "integer",
+                    "default": 10,
+                    "minimum": 1,
+                    "maximum": 100,
+                    "description": "Maximum number of results to return"
+                  },
+                  "threshold": {
+                    "type": "number",
+                    "format": "float",
+                    "minimum": 0,
+                    "maximum": 1,
+                    "default": 0.75,
+                    "description": "Similarity threshold"
+                  }
+                }
+              },
+              "example": {
+                "query": "What is machine learning?",
+                "modelId": "550e8400-e29b-41d4-a716-446655440000",
+                "collection": "knowledge_base",
+                "limit": 5,
+                "threshold": 0.8
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Search results",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "embeddingId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "chunkId": {
+                            "type": "string",
+                            "format": "uuid"
+                          },
+                          "content": {
+                            "type": "string"
+                          },
+                          "similarity": {
+                            "type": "number",
+                            "format": "float"
+                          },
+                          "metadata": {
+                            "type": "object",
+                            "additionalProperties": true
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "results": [
+                    {
+                      "embeddingId": "550e8400-e29b-41d4-a716-446655440001",
+                      "chunkId": "550e8400-e29b-41d4-a716-446655440002",
+                      "content": "Machine learning is a subset of artificial intelligence that focuses on developing systems that can learn from and make decisions based on data.",
+                      "similarity": 0.92,
+                      "metadata": {
+                        "source": "textbook.pdf",
+                        "page": 45,
+                        "section": "Introduction to ML"
+                      }
+                    },
+                    {
+                      "embeddingId": "550e8400-e29b-41d4-a716-446655440003",
+                      "chunkId": "550e8400-e29b-41d4-a716-446655440004",
+                      "content": "The key components of machine learning include data preprocessing, model training, and evaluation metrics.",
+                      "similarity": 0.85,
+                      "metadata": {
+                        "source": "research_paper.pdf",
+                        "page": 12,
+                        "section": "ML Components"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "description": "Model not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/vector-store/collections": {
+      "get": {
+        "summary": "List vector store collections",
+        "description": "Get a list of all collections in the vector store",
+        "operationId": "listVectorStoreCollections",
+        "tags": ["Vectorization"],
+        "responses": {
+          "200": {
+            "description": "List of collections",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "collections": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "name": {
+                            "type": "string"
+                          },
+                          "count": {
+                            "type": "integer"
+                          },
+                          "dimensions": {
+                            "type": "integer"
+                          },
+                          "createdAt": {
+                            "type": "string",
+                            "format": "date-time"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/vector-store/collections/{collectionName}": {
+      "delete": {
+        "summary": "Delete vector store collection",
+        "description": "Delete a specific collection from the vector store",
+        "operationId": "deleteVectorStoreCollection",
+        "tags": ["Vectorization"],
+        "parameters": [
+          {
+            "name": "collectionName",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Name of the collection to delete"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Collection deleted successfully"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "summary": "Health check",
+        "description": "Check the health status of the API",
+        "operationId": "healthCheck",
+        "tags": ["System"],
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "API is healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "ok"
+                    },
+                    "timestamp": {
+                      "type": "string",
+                      "format": "date-time"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "API is not healthy",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "summary": "System status",
+        "description": "Get detailed system status information",
+        "operationId": "systemStatus",
+        "tags": ["System"],
+        "responses": {
+          "200": {
+            "description": "System status information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "api": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": ["healthy", "degraded", "unavailable"]
+                        },
+                        "version": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "storage": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": ["healthy", "degraded", "unavailable"]
+                        },
+                        "usedSpace": {
+                          "type": "integer",
+                          "format": "int64"
+                        },
+                        "totalSpace": {
+                          "type": "integer",
+                          "format": "int64"
+                        }
+                      }
+                    },
+                    "vectorStore": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": ["healthy", "degraded", "unavailable"]
+                        },
+                        "collections": {
+                          "type": "integer"
+                        }
+                      }
+                    },
+                    "modelServices": {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "enum": ["healthy", "degraded", "unavailable"]
+                        },
+                        "activeModels": {
+                          "type": "integer"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        }
+      }
+    }
+  }
+}

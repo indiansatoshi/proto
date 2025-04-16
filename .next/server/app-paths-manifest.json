@@ -1,0 +1,12 @@
+{
+  "/api/datasets/route": "app/api/datasets/route.js",
+  "/api/knowledge-bases/route": "app/api/knowledge-bases/route.js",
+  "/api/files/route": "app/api/files/route.js",
+  "/api/models/local/route": "app/api/models/local/route.js",
+  "/api/models/provider/route": "app/api/models/provider/route.js",
+  "/api/models/custom/route": "app/api/models/custom/route.js",
+  "/datasets/page": "app/datasets/page.js",
+  "/models/page": "app/models/page.js",
+  "/ai-studio/page": "app/ai-studio/page.js",
+  "/page": "app/page.js"
+}

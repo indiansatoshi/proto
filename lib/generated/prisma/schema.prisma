@@ -1,0 +1,38 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Model {
+  id        String   @id @default(cuid())
+  name      String
+  type      String // 'llm' or 'embedding'
+  provider  String // 'local' or 'openai'
+  source    String? // For local models, this is the path
+  modelId   String? // For provider models, this is the model ID
+  apiKey    String? // For provider models, this is the API key
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model File {
+  id        String   @id @default(cuid())
+  name      String
+  type      String // MIME type
+  size      Int // Size in bytes
+  path      String? // File path or storage location
+  metadata  Json? // Additional metadata
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
