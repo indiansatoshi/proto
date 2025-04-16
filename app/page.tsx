@@ -41,7 +41,9 @@ export default function HomePage() {
           { url: '/api/files', key: 'files' },
           { url: '/api/datasets', key: 'datasets' },
           { url: '/api/knowledge-bases', key: 'knowledgeBases' },
-          { url: '/api/models', key: 'models' }
+          { url: '/api/models/local', key: 'localModels' },
+          { url: '/api/models/provider', key: 'providerModels' },
+          { url: '/api/models/custom', key: 'customModels' }
         ]
 
         const results = await Promise.allSettled(
@@ -79,12 +81,14 @@ export default function HomePage() {
               case 'knowledgeBases':
                 newMetrics.knowledgeBases = Array.isArray(data) ? data.length : 0
                 break
-              case 'models':
-                if (Array.isArray(data)) {
-                  newMetrics.localModels = data.filter((m: any) => m.type === 'local').length
-                  newMetrics.providerModels = data.filter((m: any) => m.type === 'provider').length
-                  newMetrics.customModels = data.filter((m: any) => m.type === 'custom').length
-                }
+              case 'localModels':
+                newMetrics.localModels = Array.isArray(data) ? data.length : 0
+                break
+              case 'providerModels':
+                newMetrics.providerModels = Array.isArray(data) ? data.length : 0
+                break
+              case 'customModels':
+                newMetrics.customModels = Array.isArray(data) ? data.length : 0
                 break
             }
           }
@@ -190,10 +194,21 @@ export default function HomePage() {
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
-              <li>• Upload your first file</li>
-              <li>• Create a dataset</li>
-              <li>• Set up a knowledge base</li>
-              <li>• Configure your models</li>
+              <li>
+                • <a href="/files" className="text-blue-600 hover:underline">Upload your first file</a>
+              </li>
+              <li>
+                • <a href="/datasets" className="text-blue-600 hover:underline">Create a dataset</a>
+              </li>
+              <li>
+                • <a href="/knowledge-bases" className="text-blue-600 hover:underline">Set up a knowledge base</a>
+              </li>
+              <li>
+                • <a href="/models" className="text-blue-600 hover:underline">Configure your models</a>
+              </li>
+              <li>
+                • <a href="https://your-docs-url.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Read the documentation</a>
+              </li>
             </ul>
           </CardContent>
         </Card>

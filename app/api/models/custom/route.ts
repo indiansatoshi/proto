@@ -31,11 +31,7 @@ export async function GET() {
         createdAt: 'desc'
       }
     })
-    const parsed = CustomModelListSchema.safeParse(models)
-    if (!parsed.success) {
-      return NextResponse.json({ error: parsed.error }, { status: 500 })
-    }
-    return NextResponse.json({ data: parsed.data })
+    return NextResponse.json(models)
   } catch (error) {
     return NextResponse.json({ error: 'Failed to fetch custom models' }, { status: 500 })
   }
