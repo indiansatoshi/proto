@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { Search } from '@/components/ui/search'
+import { Tooltip } from '@/components/ui/tooltip'
 
 interface DashboardMetrics {
   files: number
@@ -119,14 +120,9 @@ export default function HomePage() {
     <div>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
         <div>
-          <Breadcrumb 
-            items={[{ label: 'Home' }]} 
-            className="mb-2"
-          />
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-1">Dashboard</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Overview of your Proto workspace
-          </p>
+          <Tooltip content="Overview of your Proto workspace">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">Dashboard</h1>
+          </Tooltip>
         </div>
         <Search 
           placeholder="Search dashboard..." 

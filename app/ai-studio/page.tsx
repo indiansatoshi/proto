@@ -5,6 +5,7 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { Search } from '@/components/ui/search'
 import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
+import { Tooltip } from '@/components/ui/tooltip'
 
 export default function AIStudioPage() {
   const [tab, setTab] = useState('workflows')
@@ -26,10 +27,9 @@ export default function AIStudioPage() {
             ]} 
             className="mb-2"
           />
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-1">AI Studio</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Create, train, and deploy AI models in a powerful workspace
-          </p>
+          <Tooltip content="Create, train, and deploy AI models in a powerful workspace">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">AI Studio</h1>
+          </Tooltip>
         </div>
         <Search 
           placeholder="Search AI Studio..." 

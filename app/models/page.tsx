@@ -8,6 +8,7 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { Search } from '@/components/ui/search'
 import { Button } from '@/components/ui/button'
 import { BaseTabRef } from '@/components/ui/base-tab'
+import { Tooltip } from '@/components/ui/tooltip'
 
 export default function ModelsPage() {
   const [tab, setTab] = useState('local')
@@ -45,10 +46,9 @@ export default function ModelsPage() {
             ]} 
             className="mb-2"
           />
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-1">Models</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Manage your local, provider, and custom models
-          </p>
+          <Tooltip content="Manage your local, provider, and custom models">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">Models</h1>
+          </Tooltip>
         </div>
         <Search 
           placeholder="Search models..." 

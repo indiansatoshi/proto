@@ -8,6 +8,7 @@ import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { Search } from '@/components/ui/search'
 import { Button } from '@/components/ui/button'
 import { BaseTabRef } from '@/components/ui/base-tab'
+import { Tooltip } from '@/components/ui/tooltip'
 
 export default function DatasetsPage() {
   const [tab, setTab] = useState('files')
@@ -45,10 +46,9 @@ export default function DatasetsPage() {
             ]} 
             className="mb-2"
           />
-          <h1 className="text-xl sm:text-2xl font-bold tracking-tight mb-1">Datasets</h1>
-          <p className="text-xs sm:text-sm text-muted-foreground">
-            Manage your files, datasets, and knowledge bases
-          </p>
+          <Tooltip content="Manage your files, datasets, and knowledge bases">
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">Datasets</h1>
+          </Tooltip>
         </div>
         <Search 
           placeholder="Search datasets..." 
