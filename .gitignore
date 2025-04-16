@@ -1,3 +1,51 @@
-node_modules
-# Keep environment variables out of version control
-.env
+node_modules/
+.env*
+.env.*.local
+
+# Next.js build output
+.next/
+out/
+dist/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# OS/Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+
+# Test coverage
+coverage/
+
+# Dependency directories
+.pnpm/
+.cache/
+tmp/
+temp/
+
+# Prisma generated files (if not needed in repo)
+prisma/dev.db
+prisma/dev.sqlite
+prisma/*.sqlite
+prisma/*.db
+prisma/migrations/
+
+# Ignore local Docker artifacts
+docker-compose.override.yml
+.docker/
+
+# Ignore generated types and clients (if not needed in repo)
+lib/generated/
+node_modules/.prisma/
+
+# Ignore lock files if you want a leaner repo (optional, but not always recommended)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
