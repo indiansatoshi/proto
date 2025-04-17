@@ -6,6 +6,7 @@ import { Search } from '@/components/ui/search'
 import { useState } from 'react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs"
 import { Tooltip } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 
 export default function AIStudioPage() {
   const [tab, setTab] = useState('workflows')
@@ -28,7 +29,7 @@ export default function AIStudioPage() {
             className="mb-2"
           />
           <Tooltip content="Create, train, and deploy AI models in a powerful workspace">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">AI Studio</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help text-resolutionBlue">AI Studio</h1>
           </Tooltip>
         </div>
         <Search 
@@ -41,9 +42,9 @@ export default function AIStudioPage() {
       <Tabs defaultValue="workflows" onValueChange={setTab} className="space-y-4">
         <div className="border-b">
           <TabsList className="w-auto inline-flex h-10 items-center justify-start rounded-none border-b border-b-transparent p-0">
-            <TabsTrigger value="workflows" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Workflows</TabsTrigger>
-            <TabsTrigger value="agents" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Agents</TabsTrigger>
-            <TabsTrigger value="mcp" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">MCP</TabsTrigger>
+            <TabsTrigger value="workflows" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Workflows</TabsTrigger>
+            <TabsTrigger value="agents" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Agents</TabsTrigger>
+            <TabsTrigger value="mcp" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">MCP</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="workflows" className="mt-6">
@@ -84,6 +85,9 @@ export default function AIStudioPage() {
               </CardContent>
             </Card>
           </div>
+          <Button className="bg-resolutionBlue text-white hover:bg-resolutionBlue/90 mb-4">
+            New Workflow
+          </Button>
         </TabsContent>
         <TabsContent value="agents" className="mt-6">
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

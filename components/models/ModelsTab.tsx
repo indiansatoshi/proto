@@ -30,8 +30,8 @@ export function ModelsTab() {
   const renderModel = (model: Model) => (
     <div className="flex flex-col gap-1">
       <h3 className="font-semibold">{model.name}</h3>
-      <p className="text-sm text-gray-500">Type: {model.type}</p>
-      <p className="text-sm text-gray-500">Provider: {model.provider}</p>
+      <p className="text-sm text-muted-foreground">Type: {model.type}</p>
+      <p className="text-sm text-muted-foreground">Provider: {model.provider}</p>
     </div>
   )
 

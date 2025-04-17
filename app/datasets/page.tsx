@@ -47,7 +47,7 @@ export default function DatasetsPage() {
             className="mb-2"
           />
           <Tooltip content="Manage your files, datasets, and knowledge bases">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">Datasets</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help text-resolutionBlue">Datasets</h1>
           </Tooltip>
         </div>
         <Search 
@@ -60,11 +60,11 @@ export default function DatasetsPage() {
       <Tabs defaultValue="files" onValueChange={setTab}>
         <div className="border-b flex justify-between items-center">
           <TabsList className="w-auto inline-flex h-10 items-center justify-start rounded-none border-b border-b-transparent p-0">
-            <TabsTrigger value="files" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Files</TabsTrigger>
-            <TabsTrigger value="datasets" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Datasets</TabsTrigger>
-            <TabsTrigger value="knowledge-base" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Knowledge Base</TabsTrigger>
+            <TabsTrigger value="files" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Files</TabsTrigger>
+            <TabsTrigger value="datasets" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Datasets</TabsTrigger>
+            <TabsTrigger value="knowledge-base" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Knowledge Base</TabsTrigger>
           </TabsList>
-          <Button onClick={handleAdd} className="ml-4">
+          <Button onClick={handleAdd} className="ml-4 bg-resolutionBlue text-white hover:bg-resolutionBlue/90">
             {tab === 'files' ? 'Upload File' : tab === 'datasets' ? 'Add Dataset' : 'Add Knowledge Base'}
           </Button>
         </div>

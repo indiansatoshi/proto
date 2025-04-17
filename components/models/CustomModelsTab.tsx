@@ -53,14 +53,14 @@ export const CustomModelsTab = forwardRef<BaseTabRef, CustomModelsTabProps>(({ s
           architecture: 'transformer'
         })}
         disabled={isLoading}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+        className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"
       >
         {isLoading ? 'Creating...' : 'Create Custom Model'}
       </button>
       <button 
         onClick={onCancel}
         disabled={isLoading}
-        className="ml-2 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 disabled:opacity-50"
+        className="ml-2 px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 disabled:opacity-50"
       >
         Cancel
       </button>
@@ -78,14 +78,14 @@ export const CustomModelsTab = forwardRef<BaseTabRef, CustomModelsTabProps>(({ s
       <button 
         onClick={() => onSubmit(item)}
         disabled={isLoading}
-        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 disabled:opacity-50"
+        className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"
       >
         {isLoading ? 'Updating...' : 'Update Custom Model'}
       </button>
       <button 
         onClick={onCancel}
         disabled={isLoading}
-        className="ml-2 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 disabled:opacity-50"
+        className="ml-2 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"
       >
         Cancel
       </button>

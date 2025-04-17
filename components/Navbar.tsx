@@ -20,25 +20,25 @@ export function Navbar() {
   ]
 
   return (
-    <nav className="border-b">
+    <nav className="border-b bg-resolutionBlue">
       <div className="container mx-auto h-16 grid grid-cols-[1fr,auto,1fr] sm:grid-cols-3 items-center gap-4 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="inline-block">
-          <span className="font-bold text-lg sm:text-xl hover:text-primary transition-colors cursor-pointer">
+          <span className="font-bold text-lg sm:text-xl text-white hover:text-resolutionBlue/80 transition-colors cursor-pointer">
             Proto
           </span>
         </Link>
         <div className="flex justify-center gap-2 sm:gap-4">
           {navItems.map((item) => (
-            <Link key={item.href} href={item.href}>
-              <Button 
-                variant="ghost" 
-                className={cn(
-                  "px-2 sm:px-4 hover:bg-secondary",
-                  pathname === item.href && "bg-secondary"
-                )}
-              >
-                {item.label}
-              </Button>
+            <Link
+              key={item.href}
+              href={item.href}
+              className={cn(
+                "text-white px-2 sm:px-4 py-2 transition-colors border-b-2 border-transparent hover:border-resolutionBlue hover:text-white focus:border-resolutionBlue focus:text-white",
+                pathname === item.href && "border-white text-white font-bold"
+              )}
+              style={{ textDecoration: 'none' }}
+            >
+              {item.label}
             </Link>
           ))}
         </div>
@@ -46,7 +46,7 @@ export function Navbar() {
           <Button 
             variant={isConnected ? "secondary" : "default"}
             onClick={handleConnect}
-            className="px-4"
+            className="px-4 bg-white text-resolutionBlue hover:bg-white/90 border border-white"
           >
             {isConnected ? 'Connected' : 'Connect Wallet'}
           </Button>

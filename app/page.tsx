@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils'
 import { Breadcrumb } from '@/components/ui/breadcrumb'
 import { Search } from '@/components/ui/search'
 import { Tooltip } from '@/components/ui/tooltip'
+import { Button } from '@/components/ui/button'
 
 interface DashboardMetrics {
   files: number
@@ -125,7 +126,7 @@ export default function HomePage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
         <div>
           <Tooltip content="Overview of your Proto workspace">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">Dashboard</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help text-resolutionBlue">Dashboard</h1>
           </Tooltip>
         </div>
         <Search 
@@ -151,37 +152,37 @@ export default function HomePage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Files</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Files</CardTitle>
             <p className="text-2xl sm:text-3xl font-bold">{metrics.files}</p>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Datasets</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Datasets</CardTitle>
             <p className="text-2xl sm:text-3xl font-bold">{metrics.datasets}</p>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Knowledge Bases</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Knowledge Bases</CardTitle>
             <p className="text-2xl sm:text-3xl font-bold">{metrics.knowledgeBases}</p>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Local Models</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Local Models</CardTitle>
             <p className="text-2xl sm:text-3xl font-bold">{metrics.localModels}</p>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Provider Models</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Provider Models</CardTitle>
             <p className="text-2xl sm:text-3xl font-bold">{metrics.providerModels}</p>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Custom Models</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Custom Models</CardTitle>
             <p className="text-2xl sm:text-3xl font-bold">{metrics.customModels}</p>
           </CardHeader>
         </Card>
@@ -190,12 +191,14 @@ export default function HomePage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Getting Started</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Getting Started</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li>
-                • <a href="/files" className="text-blue-600 hover:underline">Upload your first file</a>
+                • <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+                  Upload File
+                </Button>
               </li>
               <li>
                 • <a href="/datasets" className="text-blue-600 hover:underline">Create a dataset</a>
@@ -215,7 +218,7 @@ export default function HomePage() {
 
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold">Recent Activity</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs sm:text-sm text-muted-foreground">No recent activity to display</p>

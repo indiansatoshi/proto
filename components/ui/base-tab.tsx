@@ -139,7 +139,7 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
         {(title || description) && (
           <div>
             {title && <h2 className="text-2xl font-bold">{title}</h2>}
-            {description && <p className="text-gray-500 mt-1">{description}</p>}
+            {description && <p className="text-muted-foreground mt-1">{description}</p>}
           </div>
         )}
         {!hideAddButton && (
@@ -149,25 +149,25 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
         )}
       </div>
 
-      <div className="bg-white rounded-lg shadow">
+      <div className="bg-card rounded-lg shadow">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-border">
+            <thead className="bg-muted">
               <tr>
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                    className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
                   >
                     {column.label}
                   </th>
                 ))}
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-card divide-y divide-border">
               {currentItems && currentItems.length > 0 ? (
                 currentItems.map((item, index) => (
                   <tr key={item.id || index}>
@@ -204,7 +204,7 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-6 py-4 text-center text-gray-500">
+                  <td colSpan={columns.length + 1} className="px-6 py-4 text-center text-muted-foreground">
                     No items found
                   </td>
                 </tr>
@@ -215,12 +215,12 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
 
         {/* Pagination */}
         {filteredItems.length > 0 && (
-          <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200">
+          <div className="flex items-center justify-between px-6 py-3 border-t border-border">
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-foreground">
                 Showing {startIndex + 1}-{endIndex} of {filteredItems.length} items
               </span>
-              <span className="text-sm text-gray-500">
+              <span className="text-sm text-muted-foreground">
                 (Page {currentPage} of {totalPages})
               </span>
             </div>

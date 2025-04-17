@@ -47,7 +47,7 @@ export default function ModelsPage() {
             className="mb-2"
           />
           <Tooltip content="Manage your local, provider, and custom models">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help">Models</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help text-resolutionBlue">Models</h1>
           </Tooltip>
         </div>
         <Search 
@@ -60,11 +60,11 @@ export default function ModelsPage() {
       <Tabs defaultValue="local" onValueChange={setTab}>
         <div className="border-b flex justify-between items-center">
           <TabsList className="w-auto inline-flex h-10 items-center justify-start rounded-none border-b border-b-transparent p-0">
-            <TabsTrigger value="local" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Local</TabsTrigger>
-            <TabsTrigger value="provider" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Provider</TabsTrigger>
-            <TabsTrigger value="custom" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2">Custom</TabsTrigger>
+            <TabsTrigger value="local" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Local</TabsTrigger>
+            <TabsTrigger value="provider" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Provider</TabsTrigger>
+            <TabsTrigger value="custom" className="text-sm sm:text-base rounded-none px-3 h-10 data-[state=active]:border-b-2 data-[state=active]:text-resolutionBlue">Custom</TabsTrigger>
           </TabsList>
-          <Button onClick={handleAdd} className="ml-4">
+          <Button className="bg-resolutionBlue text-white hover:bg-resolutionBlue/90 ml-4">
             {tab === 'local' ? 'Add Local Model' : tab === 'provider' ? 'Add Provider Model' : 'Add Custom Model'}
           </Button>
         </div>
