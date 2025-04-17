@@ -1,4 +1,4 @@
-// File: /Users/regan-mac/Downloads/MUD/proto-fe/app/ai-studio/page.tsx
+// File: /Users/regan-mac/Downloads/MUD/proto/app/ai-studio/page.tsx
 import * as entry from '../../../../app/ai-studio/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

@@ -16,20 +16,30 @@
       "static/chunks/main-app.js",
       "static/chunks/app/api/files/route.js"
     ],
-    "/api/datasets/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/datasets/route.js"
-    ],
     "/api/knowledge-bases/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/knowledge-bases/route.js"
     ],
-    "/api/models/route": [
+    "/api/datasets/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
-      "static/chunks/app/api/models/route.js"
+      "static/chunks/app/api/datasets/route.js"
+    ],
+    "/api/models/provider/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/models/provider/route.js"
+    ],
+    "/api/models/custom/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/models/custom/route.js"
+    ],
+    "/api/models/local/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/models/local/route.js"
     ],
     "/datasets/page": [
       "static/chunks/webpack.js",
@@ -45,31 +55,6 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/ai-studio/page.js"
-    ],
-    "/api/models/local/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/models/local/route.js"
-    ],
-    "/api/models/provider/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/models/provider/route.js"
-    ],
-    "/api/models/custom/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/models/custom/route.js"
-    ],
-    "/api/models/custom/[id]/route": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/api/models/custom/[id]/route.js"
-    ],
-    "/_not-found/page": [
-      "static/chunks/webpack.js",
-      "static/chunks/main-app.js",
-      "static/chunks/app/_not-found/page.js"
     ]
   }
 }

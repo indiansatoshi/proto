@@ -1,4 +1,4 @@
-// File: /Users/regan-mac/Downloads/MUD/proto-fe/app/api/files/route.ts
+// File: /Users/regan-mac/Downloads/MUD/proto/app/api/files/route.ts
 import * as entry from '../../../../../app/api/files/route.js'
 import type { NextRequest } from 'next/server.js'
 

@@ -1,4 +1,4 @@
-// File: /Users/regan-mac/Downloads/MUD/proto-fe/app/models/page.tsx
+// File: /Users/regan-mac/Downloads/MUD/proto/app/models/page.tsx
 import * as entry from '../../../../app/models/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
