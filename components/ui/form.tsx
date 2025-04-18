@@ -26,7 +26,7 @@ export function Form({
   return (
     <form 
       onSubmit={onSubmit} 
-      className={cn("space-y-4", className)}
+      className={cn("font-sans text-foreground space-y-4", className)}
       {...props}
     >
       <h3 className="text-lg font-semibold">{title}</h3>

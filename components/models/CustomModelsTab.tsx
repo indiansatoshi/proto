@@ -43,27 +43,29 @@ export const CustomModelsTab = forwardRef<BaseTabRef, CustomModelsTabProps>(({ s
     onCancel: () => void
     isLoading: boolean
   }) => (
-    <div className="space-y-4">
+    <div className="space-y-4 font-sans text-foreground">
       <p>Custom model creation form will be implemented here.</p>
-      <button 
-        onClick={() => onSubmit({ 
-          name: 'New Custom Model', 
-          type: 'llm', 
-          provider: 'custom',
-          architecture: 'transformer'
-        })}
-        disabled={isLoading}
-        className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"
-      >
-        {isLoading ? 'Creating...' : 'Create Custom Model'}
-      </button>
-      <button 
-        onClick={onCancel}
-        disabled={isLoading}
-        className="ml-2 px-4 py-2 bg-secondary text-secondary-foreground rounded hover:bg-secondary/80 disabled:opacity-50"
-      >
-        Cancel
-      </button>
+      <div className="flex gap-2">
+        <button 
+          onClick={() => onSubmit({ 
+            name: 'New Custom Model', 
+            type: 'llm', 
+            provider: 'custom',
+            architecture: 'transformer'
+          })}
+          disabled={isLoading}
+          className="px-6 py-3 rounded-full font-sans bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 shadow-sm"
+        >
+          {isLoading ? 'Creating...' : 'Create Custom Model'}
+        </button>
+        <button 
+          onClick={onCancel}
+          disabled={isLoading}
+          className="px-6 py-3 rounded-full font-sans bg-accent text-accent-foreground hover:bg-accent/80 disabled:opacity-50 shadow-sm"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   )
 
@@ -73,22 +75,24 @@ export const CustomModelsTab = forwardRef<BaseTabRef, CustomModelsTabProps>(({ s
     onCancel: () => void
     isLoading: boolean
   }) => (
-    <div className="space-y-4">
+    <div className="space-y-4 font-sans text-foreground">
       <p>Custom model edit form will be implemented here.</p>
-      <button 
-        onClick={() => onSubmit(item)}
-        disabled={isLoading}
-        className="px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"
-      >
-        {isLoading ? 'Updating...' : 'Update Custom Model'}
-      </button>
-      <button 
-        onClick={onCancel}
-        disabled={isLoading}
-        className="ml-2 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90 disabled:opacity-50"
-      >
-        Cancel
-      </button>
+      <div className="flex gap-2">
+        <button 
+          onClick={() => onSubmit(item)}
+          disabled={isLoading}
+          className="px-6 py-3 rounded-full font-sans bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 shadow-sm"
+        >
+          {isLoading ? 'Updating...' : 'Update Custom Model'}
+        </button>
+        <button 
+          onClick={onCancel}
+          disabled={isLoading}
+          className="px-6 py-3 rounded-full font-sans bg-accent text-accent-foreground hover:bg-accent/80 disabled:opacity-50 shadow-sm"
+        >
+          Cancel
+        </button>
+      </div>
     </div>
   )
 
@@ -104,8 +108,8 @@ export const CustomModelsTab = forwardRef<BaseTabRef, CustomModelsTabProps>(({ s
     await deleteModel(id)
   }
 
-  if (loading) return <div className="p-4">Loading...</div>
-  if (error) return <div className="p-4 text-red-500">Error: {error.message}</div>
+  if (loading) return <div className="p-4 font-sans text-foreground">Loading...</div>
+  if (error) return <div className="p-4 font-sans text-red-500">Error: {error.message}</div>
 
   return (
     <BaseTab

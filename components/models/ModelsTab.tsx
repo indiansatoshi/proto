@@ -67,6 +67,7 @@ export function ModelsTab() {
         onSubmit={handleSubmit}
         onCancel={onCancel}
         isLoading={isLoading}
+        className="font-sans text-foreground"
       >
         <FormField
           label="Name"
@@ -79,7 +80,7 @@ export function ModelsTab() {
           <select
             value={type}
             onChange={(e) => setType(e.target.value as 'embedding' | 'llm')}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
           >
             <option value="llm">LLM</option>
             <option value="embedding">Embedding</option>
@@ -90,7 +91,7 @@ export function ModelsTab() {
           <select
             value={provider}
             onChange={(e) => setProvider(e.target.value as 'local' | 'openai' | 'anthropic' | 'custom')}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
           >
             <option value="local">Local</option>
             <option value="openai">OpenAI</option>
@@ -132,6 +133,7 @@ export function ModelsTab() {
         onSubmit={handleSubmit}
         onCancel={onCancel}
         isLoading={isLoading}
+        className="font-sans text-foreground"
       >
         <FormField
           label="Name"
@@ -144,7 +146,7 @@ export function ModelsTab() {
           <select
             value={type}
             onChange={(e) => setType(e.target.value as 'embedding' | 'llm')}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
           >
             <option value="llm">LLM</option>
             <option value="embedding">Embedding</option>
@@ -155,7 +157,7 @@ export function ModelsTab() {
           <select
             value={provider}
             onChange={(e) => setProvider(e.target.value as 'local' | 'openai' | 'anthropic' | 'custom')}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
           >
             <option value="local">Local</option>
             <option value="openai">OpenAI</option>
@@ -171,16 +173,24 @@ export function ModelsTab() {
   if (error) return <div>Error: {error.message}</div>
 
   return (
-    <BaseTab<Model>
+    <BaseTab
       title="Models"
       items={models}
+      columns={[
+        { key: 'name', label: 'Name' },
+        { key: 'type', label: 'Type' },
+        { key: 'provider', label: 'Provider' },
+        { key: 'description', label: 'Description' },
+        { key: 'createdAt', label: 'Created At' }
+      ]}
       onAdd={createModel}
       onEdit={handleEdit}
       onDelete={deleteModel}
-      renderItem={renderModel}
       addButtonText="Add Model"
       renderAddForm={renderAddForm}
       renderEditForm={renderEditForm}
+      isLoading={loading}
+      hideAddButton={true}
     />
   )
 } 

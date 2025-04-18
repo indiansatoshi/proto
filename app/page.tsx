@@ -123,10 +123,10 @@ export default function HomePage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4 sm:mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-2 sm:mb-2">
         <div>
           <Tooltip content="Overview of your Proto workspace">
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help text-resolutionBlue">Dashboard</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight cursor-help text-primary">Dashboard</h1>
           </Tooltip>
         </div>
         <Search 
@@ -150,75 +150,73 @@ export default function HomePage() {
       )}
       
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Files</CardTitle>
-            <p className="text-2xl sm:text-3xl font-bold">{metrics.files}</p>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Files</CardTitle>
+            <p className="text-2xl sm:text-3xl text-muted-foreground">{metrics.files}</p>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Datasets</CardTitle>
-            <p className="text-2xl sm:text-3xl font-bold">{metrics.datasets}</p>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Datasets</CardTitle>
+            <p className="text-2xl sm:text-3xl text-muted-foreground">{metrics.datasets}</p>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Knowledge Bases</CardTitle>
-            <p className="text-2xl sm:text-3xl font-bold">{metrics.knowledgeBases}</p>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Knowledge Bases</CardTitle>
+            <p className="text-2xl sm:text-3xl text-muted-foreground">{metrics.knowledgeBases}</p>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Local Models</CardTitle>
-            <p className="text-2xl sm:text-3xl font-bold">{metrics.localModels}</p>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Local Models</CardTitle>
+            <p className="text-2xl sm:text-3xl text-muted-foreground">{metrics.localModels}</p>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Provider Models</CardTitle>
-            <p className="text-2xl sm:text-3xl font-bold">{metrics.providerModels}</p>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Provider Models</CardTitle>
+            <p className="text-2xl sm:text-3xl text-muted-foreground">{metrics.providerModels}</p>
           </CardHeader>
         </Card>
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Custom Models</CardTitle>
-            <p className="text-2xl sm:text-3xl font-bold">{metrics.customModels}</p>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Custom Models</CardTitle>
+            <p className="text-2xl sm:text-3xl text-muted-foreground">{metrics.customModels}</p>
           </CardHeader>
         </Card>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Getting Started</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Getting Started</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-2 text-xs sm:text-sm text-muted-foreground">
               <li>
-                • <Button className="bg-primary text-primary-foreground hover:bg-primary/90">
-                  Upload File
-                </Button>
+                - <a href="/datasets" className="text-primary underline underline-offset-2">Upload file</a>
               </li>
               <li>
-                • <a href="/datasets" className="text-blue-600 hover:underline">Create a dataset</a>
+                - <a href="/datasets" className="text-primary underline underline-offset-2">Create a dataset</a>
               </li>
               <li>
-                • <a href="/knowledge-bases" className="text-blue-600 hover:underline">Set up a knowledge base</a>
+                - <a href="/knowledge-bases" className="text-primary underline underline-offset-2">Set up a knowledge base</a>
               </li>
               <li>
-                • <a href="/models" className="text-blue-600 hover:underline">Configure your models</a>
+                - <a href="/models" className="text-primary underline underline-offset-2">Configure your models</a>
               </li>
               <li>
-                • <a href="https://your-docs-url.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Read the documentation</a>
+                - <a href="https://your-docs-url.com" target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-2">Read the documentation</a>
               </li>
             </ul>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="bg-white">
           <CardHeader className="pb-3">
-            <CardTitle className="text-base sm:text-lg font-semibold text-resolutionBlue">Recent Activity</CardTitle>
+            <CardTitle className="text-base sm:text-lg font-semibold text-primary">Recent Activity</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-xs sm:text-sm text-muted-foreground">No recent activity to display</p>

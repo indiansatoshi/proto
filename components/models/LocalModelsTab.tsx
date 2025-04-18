@@ -42,40 +42,37 @@ export const LocalModelsTab = forwardRef<BaseTabRef, LocalModelsTabProps>(({ sea
     setLoading(false)
   }
 
-  const handleCreate = async (data: ModelFormData) => {
-    const { model, error } = await createLocalModel(data)
+  const handleCreate = async (data: Partial<LocalModel>) => {
+    const { model, error } = await createLocalModel(data as ModelFormData)
     if (error) {
       setError(error)
-      return false
+      return
     }
     if (model) {
       setModels(prev => [model, ...prev])
     }
-    return true
   }
 
-  const handleUpdate = async (id: string, data: ModelFormData) => {
-    const { model, error } = await updateLocalModel(id, data)
+  const handleUpdate = async (id: string, data: Partial<LocalModel>) => {
+    const { model, error } = await updateLocalModel(id, data as ModelFormData)
     if (error) {
       setError(error)
-      return false
+      return
     }
     if (model) {
       setModels(prev => prev.map(m => m.id === id ? model : m))
     }
-    return true
   }
 
   const handleDelete = async (id: string) => {
     const { success, error } = await deleteLocalModel(id)
     if (error) {
       setError(error)
-      return false
+      return
     }
     if (success) {
       setModels(prev => prev.filter(m => m.id !== id))
     }
-    return true
   }
 
   const filterModels = (models: LocalModel[]) => {
@@ -110,6 +107,7 @@ export const LocalModelsTab = forwardRef<BaseTabRef, LocalModelsTabProps>(({ sea
         }}
         onCancel={onCancel}
         isLoading={isLoading}
+        className="font-sans text-foreground"
       >
         <FormField
           name="name"
@@ -165,6 +163,7 @@ export const LocalModelsTab = forwardRef<BaseTabRef, LocalModelsTabProps>(({ sea
         }}
         onCancel={onCancel}
         isLoading={isLoading}
+        className="font-sans text-foreground"
       >
         <FormField
           name="name"

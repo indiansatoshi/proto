@@ -21,7 +21,7 @@ export function Search({ placeholder = 'Search...', className, onSearch }: Searc
   }
 
   return (
-    <div className={cn('relative', className)}>
+    <div className={cn('relative font-sans text-foreground', className)}>
       <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
       <Input
         type="search"

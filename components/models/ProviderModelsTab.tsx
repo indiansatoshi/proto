@@ -61,6 +61,7 @@ export const ProviderModelsTab = forwardRef<BaseTabRef, ProviderModelsTabProps>(
       }}
       onCancel={onCancel}
       isLoading={isLoading}
+      className="font-sans text-foreground"
     >
       <div className="space-y-4">
         <FormField
@@ -73,7 +74,7 @@ export const ProviderModelsTab = forwardRef<BaseTabRef, ProviderModelsTabProps>(
           <label className="text-sm font-medium">Type</label>
           <select
             name="type"
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
             defaultValue="llm"
             required
           >
@@ -85,7 +86,7 @@ export const ProviderModelsTab = forwardRef<BaseTabRef, ProviderModelsTabProps>(
           <label className="text-sm font-medium">Provider</label>
           <select
             name="provider"
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
             defaultValue="openai"
             required
           >
@@ -133,6 +134,7 @@ export const ProviderModelsTab = forwardRef<BaseTabRef, ProviderModelsTabProps>(
       }}
       onCancel={onCancel}
       isLoading={isLoading}
+      className="font-sans text-foreground"
     >
       <div className="space-y-4">
         <FormField
@@ -146,7 +148,7 @@ export const ProviderModelsTab = forwardRef<BaseTabRef, ProviderModelsTabProps>(
           <label className="text-sm font-medium">Type</label>
           <select
             name="type"
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
             defaultValue={item.type}
             required
           >
@@ -158,7 +160,7 @@ export const ProviderModelsTab = forwardRef<BaseTabRef, ProviderModelsTabProps>(
           <label className="text-sm font-medium">Provider</label>
           <select
             name="provider"
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-10 w-full rounded-xl border border-border bg-background px-4 py-3 text-base font-sans text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-cactus)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
             defaultValue={item.provider}
             required
           >

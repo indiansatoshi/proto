@@ -9,7 +9,9 @@ const Card = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "rounded-lg border bg-card text-card-foreground shadow-sm",
+      "rounded-xl bg-card text-card-foreground shadow-md p-8 font-sans border border-border",
+      // You can use accent backgrounds for special cards, e.g.:
+      // "bg-[var(--color-cactus)] text-[var(--color-dark)]"
       className
     )}
     {...props}

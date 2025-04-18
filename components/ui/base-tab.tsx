@@ -135,7 +135,7 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
 
   return (
     <div className={className}>
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex justify-between items-center">
         {(title || description) && (
           <div>
             {title && <h2 className="text-2xl font-bold">{title}</h2>}
@@ -149,25 +149,27 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
         )}
       </div>
 
-      <div className="bg-card rounded-lg shadow">
+      <div className="bg-white/80 shadow-xl border border-primary/20 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-border">
-            <thead className="bg-muted">
+          <table className="min-w-full overflow-hidden border border-border rounded-xl shadow-md font-sans text-foreground bg-card">
+            {/* For alternate table backgrounds, you can use bg-[var(--color-cloud-light)] or bg-[var(--color-oat)] */}
+            <thead className="bg-card border-b border-border">
+              {/* For highlight rows, use bg-[var(--color-manilla-light)] */}
               <tr>
                 {columns.map((column) => (
                   <th
                     key={column.key}
-                    className="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider"
+                    className="px-6 py-4 text-left text-xs font-semibold text-primary uppercase tracking-wider"
                   >
                     {column.label}
                   </th>
                 ))}
-                <th className="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                <th className="px-6 py-4 text-right text-xs font-semibold text-primary uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody className="bg-card divide-y divide-border">
+            <tbody className="bg-white/60 divide-y divide-primary/10">
               {currentItems && currentItems.length > 0 ? (
                 currentItems.map((item, index) => (
                   <tr key={item.id || index}>
@@ -177,7 +179,7 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
                       </td>
                     ) : (
                       columns.map((column) => (
-                        <td key={column.key} className="px-6 py-4 whitespace-nowrap">
+                        <td key={column.key} className="px-6 py-4 whitespace-nowrap rounded-xl border-b border-border">
                           {column.key === 'createdAt' ? 
                             new Date(item[column.key]).toLocaleDateString() :
                             item[column.key]
@@ -204,7 +206,7 @@ export const BaseTab = forwardRef<BaseTabRef, BaseTabProps<any>>(({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={columns.length + 1} className="px-6 py-4 text-center text-muted-foreground">
+                  <td colSpan={columns.length + 1} className="px-6 py-4 text-center text-muted-foreground rounded-b-xl">
                     No items found
                   </td>
                 </tr>
